@@ -43,9 +43,9 @@ const ProcessTimeline: React.FC = () => {
                     {/* Step 2 */}
                     <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-20 group">
                         <div className="flex-1 hidden md:block order-1"></div>
-                        <div className="w-20 h-20 rounded-3xl bg-slate-900 border border-purple-500/30 flex items-center justify-center relative z-10 shadow-xl order-1 md:order-2 group-hover:scale-110 transition-transform duration-500 group-hover:border-purple-500/50">
-                            <FileCheck2 className="w-8 h-8 text-purple-500" />
-                            <div className="absolute -inset-2 rounded-3xl border border-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="w-20 h-20 rounded-3xl bg-slate-900 border border-accent-500/30 flex items-center justify-center relative z-10 shadow-xl order-1 md:order-2 group-hover:scale-110 transition-transform duration-500 group-hover:border-accent-500/50">
+                            <FileCheck2 className="w-8 h-8 text-accent-500" />
+                            <div className="absolute -inset-2 rounded-3xl border border-accent-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
                         <div className="flex-1 text-center md:text-left order-2 md:order-3">
                              <h3 className="text-2xl font-bold text-white mb-2">2. Instant Processing</h3>
@@ -63,9 +63,9 @@ const ProcessTimeline: React.FC = () => {
                                 Meta reviews the prioritized submission (30 mins - 24 hours). Once approved, the blue tick appears instantly.
                             </p>
                         </div>
-                        <div className="w-20 h-20 rounded-3xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center relative z-10 shadow-xl order-1 md:order-2 group-hover:scale-110 transition-transform duration-500 group-hover:border-emerald-500/50">
-                            <BadgeCheck className="w-8 h-8 text-emerald-500" />
-                            <div className="absolute -inset-2 rounded-3xl border border-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="w-20 h-20 rounded-3xl bg-slate-900 border border-accent-500/30 flex items-center justify-center relative z-10 shadow-xl order-1 md:order-2 group-hover:scale-110 transition-transform duration-500 group-hover:border-accent-500/50">
+                            <BadgeCheck className="w-8 h-8 text-accent-500" />
+                            <div className="absolute -inset-2 rounded-3xl border border-accent-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
                         <div className="flex-1 order-3 hidden md:block"></div>
                     </div>

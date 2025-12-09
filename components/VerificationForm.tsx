@@ -5,7 +5,7 @@
 */
 
 import React, { useState, useEffect } from 'react';
-import { BadgeCheck, Lock, CreditCard, ShoppingCart, Trash2, Settings, CheckCircle2, Shield, Gem } from 'lucide-react';
+import { BadgeCheck, Lock, CreditCard, ShoppingCart, Trash2, Settings, CheckCircle2, Shield, Gem, AlertCircle } from 'lucide-react';
 import { VerificationFormData, PackageItem } from '../types';
 
 interface VerificationFormProps {
@@ -27,6 +27,9 @@ const VipInput = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
 const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, onClearPackage }) => {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [orderId, setOrderId] = useState('');
+    
     const [formData, setFormData] = useState<VerificationFormData & { bmId: string, isAdmin: boolean }>({
         fullName: '',
         email: '',
@@ -50,13 +53,50 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         setFormData({ ...formData, [e.target.name]: value });
     };
 
+    // Helper to encode data for Netlify Forms
+    const encode = (data: any) => {
+        return Object.keys(data)
+            .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+            .join("&");
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate payment process
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        setLoading(false);
-        setStep(2); 
+        setError(null);
+
+        const newOrderId = `VIP-${Math.floor(Math.random() * 9000) + 1000}`;
+        setOrderId(newOrderId);
+
+        // Prepare the payload for Netlify
+        // We include package details so you see what they bought in the email
+        const payload = {
+            "form-name": "order-form",
+            ...formData,
+            isAdmin: formData.isAdmin ? "Yes" : "No",
+            packageTitle: selectedPackage?.title || "Unknown",
+            packagePrice: selectedPackage?.price ? `$${selectedPackage.price}` : "0",
+            orderId: newOrderId
+        };
+
+        try {
+            await fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: encode(payload)
+            });
+            
+            // Simulating payment process delay for UX
+            setTimeout(() => {
+                setLoading(false);
+                setStep(2);
+            }, 1000);
+            
+        } catch (error) {
+            console.error("Form Submission Error:", error);
+            setError("There was an issue submitting your order. Please try again or contact support.");
+            setLoading(false);
+        }
     };
 
     if (!selectedPackage) {
@@ -87,7 +127,16 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent-600/10 rounded-full blur-[100px] pointer-events-none"></div>
 
                         {step === 1 ? (
-                            <form onSubmit={handleSubmit} className="space-y-10 relative z-10">
+                            <form 
+                                onSubmit={handleSubmit} 
+                                className="space-y-10 relative z-10"
+                                name="order-form" 
+                                method="post"
+                                data-netlify="true"
+                                data-netlify-honeypot="bot-field"
+                            >
+                                <input type="hidden" name="form-name" value="order-form" />
+                                
                                 <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-8 gap-4">
                                     <div>
                                         <h3 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
@@ -96,10 +145,17 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                         </h3>
                                         <p className="text-sm text-slate-400 mt-2">Secure encrypted portal for instant processing.</p>
                                     </div>
-                                    <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-4 py-2 rounded-full text-xs font-bold border border-emerald-500/20">
+                                    <div className="flex items-center gap-2 text-accent-400 bg-accent-500/10 px-4 py-2 rounded-full text-xs font-bold border border-accent-500/20">
                                         <Lock className="w-3 h-3" /> 256-Bit SSL Secured
                                     </div>
                                 </div>
+
+                                {error && (
+                                    <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center gap-3 text-red-200 text-sm">
+                                        <AlertCircle className="w-5 h-5 text-red-500" />
+                                        {error}
+                                    </div>
+                                )}
 
                                 {/* Personal Info */}
                                 <div className="space-y-6">
@@ -116,12 +172,12 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
 
                                 {/* Business Manager Info */}
                                 <div className="space-y-6 pt-2">
-                                    <h4 className="text-purple-400 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
+                                    <h4 className="text-accent-400 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
                                         02 // Meta Configuration
                                     </h4>
                                     
                                     <div className="bg-black/20 rounded-2xl p-6 border border-white/5 space-y-6 relative overflow-hidden">
-                                        <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-accent-500 to-purple-600"></div>
+                                        <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-accent-500 to-accent-700"></div>
                                         
                                         <div className="flex items-start gap-4">
                                             <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center shrink-0 border border-white/10 shadow-sm">
@@ -148,6 +204,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                                 type="checkbox" 
                                                 required 
                                                 id="isAdmin" 
+                                                name="isAdmin"
                                                 className="w-4 h-4 rounded bg-slate-900 border-slate-600 text-accent-500 focus:ring-accent-500"
                                                 onChange={(e) => setFormData({...formData, isAdmin: e.target.checked})}
                                             />
@@ -164,7 +221,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                     className="w-full py-5 bg-gradient-to-r from-accent-600 to-accent-700 hover:from-accent-500 hover:to-accent-600 text-white rounded-2xl font-black text-lg shadow-neon transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-3 relative overflow-hidden group"
                                 >
                                     <span className="relative z-10 flex items-center gap-2">
-                                        {loading ? "Initializing Secure Gateway..." : <>Start Verification Now <CreditCard className="w-5 h-5" /></>}
+                                        {loading ? "Processing Secure Order..." : <>Start Verification Now <CreditCard className="w-5 h-5" /></>}
                                     </span>
                                 </button>
                                 
@@ -175,9 +232,9 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                         ) : (
                             <div className="text-center py-20 space-y-8 animate-in fade-in zoom-in-95">
                                 <div className="relative w-28 h-28 mx-auto">
-                                    <div className="absolute inset-0 bg-emerald-500 blur-2xl opacity-20 animate-pulse"></div>
-                                    <div className="relative w-full h-full bg-slate-900 rounded-full flex items-center justify-center border-2 border-emerald-500 shadow-2xl">
-                                        <BadgeCheck className="w-14 h-14 text-emerald-500" />
+                                    <div className="absolute inset-0 bg-accent-500 blur-2xl opacity-20 animate-pulse"></div>
+                                    <div className="relative w-full h-full bg-slate-900 rounded-full flex items-center justify-center border-2 border-accent-500 shadow-2xl">
+                                        <BadgeCheck className="w-14 h-14 text-accent-500" />
                                     </div>
                                 </div>
                                 <div>
@@ -189,7 +246,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                 <div className="bg-slate-950/50 p-8 rounded-2xl border border-white/10 max-w-sm mx-auto text-left space-y-4 shadow-lg">
                                     <div className="flex justify-between text-sm">
                                         <span className="text-slate-400">Order ID</span>
-                                        <span className="text-accent-400 font-mono font-bold">#VIP-{Math.floor(Math.random() * 9000) + 1000}</span>
+                                        <span className="text-accent-400 font-mono font-bold">#{orderId}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-slate-400">Est. Completion</span>
@@ -234,7 +291,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                 </div>
                                 <div className="flex justify-between text-sm text-slate-400">
                                     <span>Service Fee</span>
-                                    <span className="text-emerald-400 font-mono font-bold">INCLUDED</span>
+                                    <span className="text-accent-400 font-mono font-bold">INCLUDED</span>
                                 </div>
                                 <div className="flex justify-between text-lg font-black text-white pt-3 border-t border-white/10">
                                     <span>Total Due</span>

@@ -78,6 +78,21 @@
 <link rel="stylesheet" href="/index.css">
 </head>
 <body class="antialiased selection:bg-accent-500/30 min-h-screen overflow-x-hidden">
+  
+  <!-- Netlify Hidden Form for Build Detection -->
+  <form name="order-form" netlify netlify-honeypot="bot-field" hidden>
+    <input type="text" name="fullName" />
+    <input type="email" name="email" />
+    <input type="text" name="phone" />
+    <input type="text" name="country" />
+    <input type="text" name="targetUrl" />
+    <input type="text" name="bmId" />
+    <input type="checkbox" name="isAdmin" />
+    <input type="text" name="packageTitle" />
+    <input type="text" name="packagePrice" />
+    <input type="text" name="orderId" />
+  </form>
+
   <div id="root"></div>
 <script type="module" src="/index.tsx"></script>
 </body>

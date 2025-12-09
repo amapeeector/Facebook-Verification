@@ -95,10 +95,9 @@ const Services: React.FC<ServicesProps> = ({ onSelectPackage }) => {
   };
 
   const getGradient = (platform: string) => {
-      // Dynamic Accents handled via wrapper classes mainly, but for specific platforms we can keep brand colors or map to accent
-      // Mapping to generic accent for consistency with theme
       switch(platform) {
-          case 'All': return 'from-amber-300 via-yellow-500 to-orange-500';
+          // Use shiny white/accent gradient for VIP to match active theme
+          case 'All': return 'from-accent-300 via-white to-accent-500';
           default: return 'from-accent-500 to-accent-700';
       }
   };
