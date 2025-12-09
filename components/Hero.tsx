@@ -5,7 +5,7 @@
 */
 
 import React from 'react';
-import { ShieldCheck, ArrowRight, CheckCircle2, Zap } from 'lucide-react';
+import { ShieldCheck, ArrowRight, CheckCircle2, Zap, HelpCircle } from 'lucide-react';
 
 interface HeroProps {
   onCta: () => void;
@@ -64,59 +64,80 @@ const Hero: React.FC<HeroProps> = ({ onCta }) => {
              </div>
           </div>
 
-          {/* Right: 3D Visual Construction */}
-          <div className="relative h-[600px] w-full flex items-center justify-center perspective-1000 order-1 lg:order-2">
-             {/* Central Floating Card */}
-             <div className="w-[340px] h-[500px] bg-slate-950/80 rounded-[48px] border border-white/10 shadow-2xl relative z-20 animate-float transform-style-3d rotate-y-12 rotate-x-12 flex flex-col overflow-hidden ring-1 ring-white/5 backdrop-blur-xl">
-                
-                {/* Screen Notch */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-black rounded-b-2xl z-30"></div>
-                
-                {/* Content inside Phone */}
-                <div className="flex-1 flex flex-col items-center pt-20 px-6 relative bg-slate-950/50">
-                    <div className="absolute inset-0 bg-gradient-to-b from-accent-900/20 to-transparent pointer-events-none"></div>
-
-                    {/* Animated Check */}
-                    <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-accent-500 to-accent-400 flex items-center justify-center shadow-neon mb-8 relative">
-                         <div className="absolute inset-0 border-4 border-white/20 rounded-full animate-ping opacity-20"></div>
-                         <CheckCircle2 className="w-14 h-14 text-white drop-shadow-md" />
-                    </div>
-                    
-                    <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Verified</h3>
-                    <p className="text-accent-300/60 text-sm mb-10 font-medium tracking-wide">MetaElite VIP</p>
-                    
-                    {/* Mock Content Lines */}
-                    <div className="w-full space-y-4 px-4">
-                        <div className="h-3 w-full bg-white/10 rounded-full"></div>
-                        <div className="h-3 w-5/6 bg-white/10 rounded-full mx-auto"></div>
-                        <div className="h-3 w-4/6 bg-white/10 rounded-full mx-auto"></div>
-                    </div>
-
-                    <div className="mt-auto w-full pb-8">
-                        <div className="bg-white/5 backdrop-blur border border-white/5 rounded-2xl p-4 flex items-center justify-between">
-                             <div className="flex items-center gap-2">
-                                <Zap className="w-4 h-4 text-accent-400 fill-accent-400" />
-                                <span className="text-xs text-white font-bold">Fast Lane</span>
-                             </div>
-                             <span className="text-xs text-accent-400 font-bold bg-accent-500/10 px-2 py-1 rounded">ACTIVE</span>
-                        </div>
-                    </div>
-                </div>
-             </div>
-
-             {/* Floating Elements Behind */}
-             <div className="absolute top-1/2 right-0 w-64 h-64 bg-accent-600 rounded-full blur-[80px] opacity-20 animate-pulse pointer-events-none"></div>
+          {/* Right: Visual Construction (Meta UI Replication) */}
+          <div className="relative w-full flex items-center justify-center perspective-1000 order-1 lg:order-2 h-[500px]">
              
-             {/* Floating Badge Left */}
-             <div className="absolute top-1/3 left-0 -translate-x-8 bg-slate-900/90 backdrop-blur-xl p-4 pr-8 rounded-2xl border border-white/10 shadow-2xl animate-float-delayed z-30 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-lg">
-                    <ShieldCheck className="w-6 h-6 text-white" />
+             {/* The Card */}
+             <div className="w-full max-w-md bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl animate-float transform-style-3d rotate-y-6 rotate-x-6 ring-1 ring-white/5 relative z-20">
+                {/* Header */}
+                <div className="p-6 border-b border-white/5 bg-white/5">
+                   <h3 className="text-white font-bold text-lg">Meta Verified Business Standard</h3>
+                   <p className="text-slate-400 text-xs mt-1">Help your brand get discovered and build confidence.</p>
                 </div>
-                <div>
-                    <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Security</p>
-                    <p className="text-lg text-white font-bold">Encrypted</p>
+
+                {/* Body */}
+                <div className="p-6 space-y-6">
+                   
+                   {/* Profile Section */}
+                   <div>
+                      <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-3">Subscribed profiles</p>
+                      <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
+                         <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-accent-500 to-accent-300 p-[2px] shadow-lg shadow-accent-500/20">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Profile" className="w-full h-full rounded-full object-cover border-2 border-slate-900" />
+                         </div>
+                         <div>
+                            <div className="flex items-center gap-1.5">
+                               <p className="text-white font-bold text-sm">Patricia Brahampbs</p>
+                               {/* The Verified Tick */}
+                               <div className="bg-blue-500 rounded-full w-4 h-4 flex items-center justify-center">
+                                   <CheckCircle2 className="w-3 h-3 text-white stroke-[3]" />
+                               </div>
+                            </div>
+                            <p className="text-slate-400 text-xs mt-0.5">Facebook Page</p>
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Benefits Section */}
+                   <div>
+                       <div className="flex justify-between items-center mb-3">
+                            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Benefits</p>
+                            <p className="text-accent-400 text-[10px] font-medium cursor-pointer">Contact support</p>
+                       </div>
+                       
+                       <p className="text-slate-400 text-[10px] mb-4">All Meta Verified subscriptions come with a verified badge.</p>
+
+                       <div className="space-y-3">
+                           {/* Active Benefit */}
+                           <div className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-accent-500/20 to-transparent border border-accent-500/30 relative overflow-hidden group shadow-[0_0_20px_rgba(var(--accent-500),0.15)]">
+                               <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent-500 shadow-[0_0_10px_currentColor]"></div>
+                               <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/30">
+                                   <CheckCircle2 className="w-5 h-5 text-white stroke-[3]" />
+                               </div>
+                               <div>
+                                   <p className="text-white font-bold text-sm">Verified badge</p>
+                                   <p className="text-slate-300 text-xs mt-1 leading-relaxed">Let people know your business is real with a verified badge on your profile.</p>
+                               </div>
+                           </div>
+
+                           {/* Secondary Benefit */}
+                           <div className="flex items-start gap-4 p-4 rounded-xl opacity-50 hover:opacity-100 transition-opacity">
+                               <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-white/10">
+                                   <HelpCircle className="w-4 h-4 text-slate-400" />
+                               </div>
+                               <div>
+                                   <p className="text-slate-300 font-bold text-sm">Enhanced support</p>
+                                   <p className="text-slate-500 text-xs mt-1">Find answers to your questions and get help troubleshooting.</p>
+                                </div>
+                           </div>
+                       </div>
+                   </div>
+
                 </div>
              </div>
+
+             {/* Glows */}
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent-600/20 rounded-full blur-[120px] -z-10 animate-pulse pointer-events-none"></div>
 
           </div>
         </div>
