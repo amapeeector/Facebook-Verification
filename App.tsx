@@ -11,6 +11,7 @@ import VerificationForm from './components/VerificationForm';
 import ProcessTimeline from './components/ProcessTimeline';
 import WhyChooseUs from './components/WhyChooseUs';
 import Footer from './components/Footer';
+import ProofGallery from './components/ProofGallery';
 import { BadgeCheck, Menu, X, ShoppingBag, Palette } from 'lucide-react';
 import { PackageItem } from './types';
 
@@ -150,6 +151,11 @@ const App: React.FC = () => {
       <main className="flex-1">
         <section id="hero">
           <Hero onCta={() => scrollToSection('services')} />
+        </section>
+
+        {/* Proof Gallery Section Added Here */}
+        <section id="proof">
+           <ProofGallery />
         </section>
 
         <section id="services" className="relative">

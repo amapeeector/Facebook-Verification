@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { PackageItem } from '../types';
-import { ShoppingBag, Check, Facebook, Instagram, MessageCircle, Star, Clock, Zap, Crown, Quote, User } from 'lucide-react';
+import { ShoppingBag, Check, Facebook, Instagram, MessageCircle, Star, Clock, Zap, Crown, Quote, User, CheckCircle2 } from 'lucide-react';
 
 interface ServicesProps {
   onSelectPackage: (pkg: PackageItem) => void;
@@ -82,23 +82,30 @@ const TESTIMONIALS = [
 ];
 
 const Services: React.FC<ServicesProps> = ({ onSelectPackage }) => {
-  
-  const getIcon = (platform: string) => {
+
+  const getProfileImage = (platform: string) => {
       switch(platform) {
-          case 'Instagram': return <Instagram className="w-10 h-10 text-white" />;
-          case 'Facebook': return <Facebook className="w-10 h-10 text-white" />;
-          case 'WhatsApp': return <MessageCircle className="w-10 h-10 text-white" />;
-          case 'Bundle': return <div className="flex -space-x-2"><Instagram className="w-8 h-8 text-white"/><Facebook className="w-8 h-8 text-white"/></div>;
-          case 'All': return <Star className="w-10 h-10 text-white fill-white" />;
-          default: return <Zap className="w-10 h-10 text-white" />;
+          case 'Instagram': return "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop";
+          case 'Facebook': return "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop";
+          case 'WhatsApp': return "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop";
+          case 'All': return "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=100&h=100&fit=crop";
+          default: return "";
       }
   };
 
-  const getGradient = (platform: string) => {
+  const getPlatformColor = (platform: string) => {
       switch(platform) {
-          // Use shiny white/accent gradient for VIP to match active theme
-          case 'All': return 'from-accent-300 via-white to-accent-500';
-          default: return 'from-accent-500 to-accent-700';
+          case 'WhatsApp': return 'text-green-500';
+          default: return 'text-blue-500';
+      }
+  };
+
+  const getCoverGradient = (platform: string) => {
+      switch(platform) {
+          case 'Instagram': return 'bg-gradient-to-r from-purple-500 to-pink-500';
+          case 'WhatsApp': return 'bg-gradient-to-r from-emerald-600 to-teal-500';
+          case 'Facebook': return 'bg-blue-600';
+          default: return 'bg-gradient-to-r from-slate-700 to-slate-800';
       }
   };
 
@@ -127,36 +134,56 @@ const Services: React.FC<ServicesProps> = ({ onSelectPackage }) => {
                     : 'border-white/5 hover:border-accent-500/30 hover:shadow-2xl'
                 }`}
             >
-                {/* 3D Visual Header */}
-                <div className="relative h-32 w-full bg-slate-950 overflow-hidden flex items-center justify-center">
-                    <div className={`absolute inset-0 bg-gradient-to-b ${getGradient(pkg.platform)} opacity-10 group-hover:opacity-20 transition-opacity`}></div>
+                {/* Real Profile Header Visual */}
+                <div className="relative h-28 w-full">
+                    {/* Cover Photo */}
+                    <div className={`absolute inset-0 ${getCoverGradient(pkg.platform)} opacity-80 group-hover:opacity-100 transition-opacity`}></div>
                     
-                    {/* The 3D Icon Object */}
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${getGradient(pkg.platform)} shadow-lg flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 relative z-10`}>
-                         <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/30 rounded-2xl pointer-events-none"></div>
-                         {getIcon(pkg.platform)}
+                    {/* Platform Icon Badge */}
+                    <div className="absolute top-3 right-3 p-1.5 bg-black/20 backdrop-blur-md rounded-lg text-white">
+                        {pkg.platform === 'Instagram' && <Instagram className="w-4 h-4" />}
+                        {pkg.platform === 'Facebook' && <Facebook className="w-4 h-4" />}
+                        {pkg.platform === 'WhatsApp' && <MessageCircle className="w-4 h-4" />}
+                        {pkg.platform === 'All' && <Star className="w-4 h-4" />}
+                    </div>
+
+                    {/* Profile Pic overlapping */}
+                    <div className="absolute -bottom-8 left-6">
+                        <div className="relative">
+                            <img 
+                                src={getProfileImage(pkg.platform)} 
+                                alt={pkg.platform}
+                                className="w-16 h-16 rounded-full border-4 border-slate-900 object-cover"
+                            />
+                            <div className="absolute bottom-0 right-0 bg-white rounded-full p-0.5 border border-slate-900">
+                                <CheckCircle2 className={`w-4 h-4 ${getPlatformColor(pkg.platform)} fill-white`} />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 {/* Content Body */}
-                <div className="p-6 flex-1 flex flex-col relative">
+                <div className="px-6 pb-6 pt-10 flex-1 flex flex-col relative">
                     {/* Badge */}
                     {pkg.highlight && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent-500 to-accent-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg uppercase tracking-wider flex items-center gap-1 z-20 whitespace-nowrap">
+                        <div className="absolute top-3 right-6 bg-gradient-to-r from-accent-500 to-accent-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg uppercase tracking-wider flex items-center gap-1 z-20 whitespace-nowrap">
                             <Crown className="w-3 h-3 fill-white" /> Best Value
                         </div>
                     )}
 
-                    <div className="mb-6 text-center">
-                        <h3 className="text-lg font-bold text-white mb-3">{pkg.title}</h3>
+                    <div className="mb-6">
+                        <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-1">
+                            {pkg.title} 
+                        </h3>
+                        <p className="text-xs text-slate-400 mb-3">Professional Verification</p>
                         
-                        <div className="flex items-baseline justify-center">
-                            <span className="text-2xl font-bold text-slate-500 align-top mr-1">$</span>
-                            <span className={`text-6xl font-black tracking-tighter ${pkg.highlight ? 'text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-accent-500' : 'text-white'}`}>
+                        <div className="flex items-baseline">
+                            <span className="text-xl font-bold text-slate-500 align-top mr-1">$</span>
+                            <span className={`text-5xl font-black tracking-tighter ${pkg.highlight ? 'text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-accent-500' : 'text-white'}`}>
                                 {pkg.price}
                             </span>
                         </div>
-                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mt-2">One-Time Service Fee</p>
+                        <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wide mt-1">One-Time Service Fee</p>
                     </div>
 
                     <div className="space-y-4 mb-8 flex-1 border-t border-white/5 pt-6">
