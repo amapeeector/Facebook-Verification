@@ -5,7 +5,7 @@
 */
 
 import React from 'react';
-import { ShieldCheck, ArrowRight, CheckCircle2, Zap, HelpCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Facebook, Instagram, MessageCircle, MoreHorizontal } from 'lucide-react';
 
 interface HeroProps {
   onCta: () => void;
@@ -64,76 +64,137 @@ const Hero: React.FC<HeroProps> = ({ onCta }) => {
              </div>
           </div>
 
-          {/* Right: Visual Construction (Meta UI Replication) */}
-          <div className="relative w-full flex items-center justify-center perspective-1000 order-1 lg:order-2 h-[500px]">
+          {/* Right: Visual Construction (3D Cards) */}
+          <div className="relative w-full h-[600px] flex items-center justify-center perspective-1000 order-1 lg:order-2">
              
-             {/* The Card */}
-             <div className="w-full max-w-md bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl animate-float transform-style-3d rotate-y-6 rotate-x-6 ring-1 ring-white/5 relative z-20">
+             {/* 1. Facebook Card (Background Left) */}
+             <div className="absolute left-0 lg:-left-4 top-20 w-[280px] bg-slate-950/90 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl transform -rotate-y-12 -rotate-z-6 scale-90 hover:scale-100 hover:z-30 hover:rotate-0 transition-all duration-500 group border-b-4 border-b-blue-600">
                 {/* Header */}
-                <div className="p-6 border-b border-white/5 bg-white/5">
-                   <h3 className="text-white font-bold text-lg">Meta Verified Business Standard</h3>
-                   <p className="text-slate-400 text-xs mt-1">Help your brand get discovered and build confidence.</p>
+                <div className="p-4 bg-slate-900/50 flex items-center justify-between border-b border-white/5">
+                    <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-blue-600 rounded-lg">
+                            <Facebook className="w-4 h-4 text-white" />
+                        </div>
+                        <span className="text-xs font-bold text-white">Facebook</span>
+                    </div>
+                    <MoreHorizontal className="w-4 h-4 text-slate-500" />
                 </div>
+                {/* Content */}
+                <div className="p-5 text-center space-y-4">
+                    <div className="relative w-16 h-16 mx-auto">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" alt="Profile" className="w-full h-full rounded-full object-cover border-2 border-slate-800 p-0.5" />
+                        <div className="absolute bottom-0 right-0 bg-blue-500 text-white p-1 rounded-full border-2 border-slate-950">
+                            <CheckCircle2 className="w-3 h-3 stroke-[3]" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="text-white font-bold text-sm">Patricia B.</h3>
+                        <p className="text-slate-400 text-[10px]">Public Figure</p>
+                    </div>
+                    <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                         <div className="flex items-center gap-2 justify-center text-blue-400 text-xs font-bold">
+                             <CheckCircle2 className="w-4 h-4" /> Meta Verified
+                         </div>
+                    </div>
+                </div>
+             </div>
 
-                {/* Body */}
-                <div className="p-6 space-y-6">
-                   
-                   {/* Profile Section */}
-                   <div>
-                      <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-3">Subscribed profiles</p>
-                      <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
-                         <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-accent-500 to-accent-300 p-[2px] shadow-lg shadow-accent-500/20">
-                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Profile" className="w-full h-full rounded-full object-cover border-2 border-slate-900" />
+             {/* 2. Instagram Card (Background Right) */}
+             <div className="absolute right-0 lg:-right-4 top-20 w-[280px] bg-slate-950/90 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl transform rotate-y-12 rotate-z-6 scale-90 hover:scale-100 hover:z-30 hover:rotate-0 transition-all duration-500 group border-b-4 border-b-pink-500">
+                {/* Header */}
+                <div className="p-4 bg-slate-900/50 flex items-center justify-between border-b border-white/5">
+                    <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 rounded-lg">
+                            <Instagram className="w-4 h-4 text-white" />
+                        </div>
+                        <span className="text-xs font-bold text-white">Instagram</span>
+                    </div>
+                    <MoreHorizontal className="w-4 h-4 text-slate-500" />
+                </div>
+                {/* Content */}
+                <div className="p-5 text-center space-y-4">
+                    <div className="relative w-16 h-16 mx-auto">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop" alt="Profile" className="w-full h-full rounded-full object-cover border-2 border-slate-800 p-0.5" />
+                        <div className="absolute bottom-0 right-0 bg-blue-500 text-white p-1 rounded-full border-2 border-slate-950">
+                            <CheckCircle2 className="w-3 h-3 stroke-[3]" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="text-white font-bold text-sm">@tomie.official</h3>
+                        <p className="text-slate-400 text-[10px]">Entrepreneur</p>
+                    </div>
+                    <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-pink-500/20">
+                         <div className="flex items-center gap-2 justify-center text-pink-400 text-xs font-bold">
+                             <CheckCircle2 className="w-4 h-4" /> Meta Verified
+                         </div>
+                    </div>
+                </div>
+             </div>
+
+             {/* 3. WhatsApp Card (Foreground Center) - The "Hero" Card */}
+             <div className="absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.15)] hover:scale-105 transition-transform duration-500 ring-1 ring-white/5">
+                 {/* Header */}
+                 <div className="bg-[#075E54] p-4 flex items-center justify-between relative overflow-hidden">
+                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                     <div className="flex items-center gap-3 relative z-10">
+                         <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                             <MessageCircle className="w-6 h-6 text-white" />
                          </div>
                          <div>
-                            <div className="flex items-center gap-1.5">
-                               <p className="text-white font-bold text-sm">Patricia Brahampbs</p>
-                               {/* The Verified Tick */}
-                               <div className="bg-blue-500 rounded-full w-4 h-4 flex items-center justify-center">
-                                   <CheckCircle2 className="w-3 h-3 text-white stroke-[3]" />
-                               </div>
-                            </div>
-                            <p className="text-slate-400 text-xs mt-0.5">Facebook Page</p>
+                             <h3 className="text-white font-bold text-sm">WhatsApp Business</h3>
+                             <p className="text-emerald-100 text-[10px]">Official API Account</p>
                          </div>
-                      </div>
-                   </div>
+                     </div>
+                     <div className="px-2 py-1 bg-white/20 rounded text-[10px] font-bold text-white uppercase backdrop-blur-md">
+                         Active
+                     </div>
+                 </div>
 
-                   {/* Benefits Section */}
-                   <div>
-                       <div className="flex justify-between items-center mb-3">
-                            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Benefits</p>
-                            <p className="text-accent-400 text-[10px] font-medium cursor-pointer">Contact support</p>
-                       </div>
-                       
-                       <p className="text-slate-400 text-[10px] mb-4">All Meta Verified subscriptions come with a verified badge.</p>
+                 {/* Body */}
+                 <div className="p-6 bg-slate-950/80 backdrop-blur-xl">
+                     <div className="flex items-center gap-4 mb-6">
+                         <div className="relative">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop" alt="Business" className="w-14 h-14 rounded-full object-cover border-2 border-emerald-500" />
+                            <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1 rounded-full border-2 border-slate-900 shadow-sm">
+                                <CheckCircle2 className="w-3 h-3 stroke-[3]" />
+                            </div>
+                         </div>
+                         <div>
+                             <h4 className="text-white font-bold text-base flex items-center gap-2">
+                                 Honey World <span className="text-emerald-500 text-xs bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Official</span>
+                             </h4>
+                             <p className="text-slate-400 text-xs">Business Account</p>
+                         </div>
+                     </div>
 
-                       <div className="space-y-3">
-                           {/* Active Benefit */}
-                           <div className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-accent-500/20 to-transparent border border-accent-500/30 relative overflow-hidden group shadow-[0_0_20px_rgba(var(--accent-500),0.15)]">
-                               <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent-500 shadow-[0_0_10px_currentColor]"></div>
-                               <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/30">
-                                   <CheckCircle2 className="w-5 h-5 text-white stroke-[3]" />
-                               </div>
-                               <div>
-                                   <p className="text-white font-bold text-sm">Verified badge</p>
-                                   <p className="text-slate-300 text-xs mt-1 leading-relaxed">Let people know your business is real with a verified badge on your profile.</p>
-                               </div>
-                           </div>
+                     <div className="space-y-3">
+                         <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                             <div className="flex items-center gap-3">
+                                 <div className="p-2 bg-emerald-500/20 rounded-full">
+                                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                                 </div>
+                                 <div>
+                                     <p className="text-white font-bold text-xs">Green Tick Active</p>
+                                     <p className="text-emerald-400/70 text-[10px]">Verified Business</p>
+                                 </div>
+                             </div>
+                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                         </div>
 
-                           {/* Secondary Benefit */}
-                           <div className="flex items-start gap-4 p-4 rounded-xl opacity-50 hover:opacity-100 transition-opacity">
-                               <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-white/10">
-                                   <HelpCircle className="w-4 h-4 text-slate-400" />
-                               </div>
-                               <div>
-                                   <p className="text-slate-300 font-bold text-sm">Enhanced support</p>
-                                   <p className="text-slate-500 text-xs mt-1">Find answers to your questions and get help troubleshooting.</p>
-                                </div>
-                           </div>
-                       </div>
-                   </div>
-
-                </div>
+                         <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 opacity-60">
+                             <div className="p-2 bg-white/5 rounded-full">
+                                 <MessageCircle className="w-4 h-4 text-slate-400" />
+                             </div>
+                             <div>
+                                 <p className="text-slate-300 font-bold text-xs">High Limit Messaging</p>
+                                 <p className="text-slate-500 text-[10px]">Tier 1 Access</p>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 
+                 {/* Footer Shine */}
+                 <div className="h-1.5 w-full bg-gradient-to-r from-emerald-600 via-emerald-400 to-emerald-600"></div>
              </div>
 
              {/* Glows */}
