@@ -20,23 +20,19 @@
     transform: rotateX(12deg);
   }
   .shadow-neon-blue {
-    box-shadow: 0 0 20px -5px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 20px -5px rgba(59, 130, 246, 0.4);
   }
-  .shadow-neon-purple {
-    box-shadow: 0 0 20px -5px rgba(168, 85, 247, 0.5);
-  }
-  .text-glow {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  .shadow-soft-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
   }
 }
 
 body {
-  background-color: #020617; /* slate-950 */
-  /* More vibrant, deep background */
+  background-color: #f8fafc; /* slate-50 */
   background-image: 
-    radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.15), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.15), transparent 25%);
-  color: white;
+    radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%);
+  color: #0f172a; /* slate-900 */
 }
 
 /* Custom Scrollbar */
@@ -44,22 +40,25 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #94a3b8;
 }
 
-/* Glassmorphism Panel */
+/* Glassmorphism Panel - Light Mode */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px -2px rgba(0, 0, 0, 0.02);
 }
 
 /* 3D Card Hover Effect */
@@ -68,7 +67,7 @@ body {
 }
 .card-3d:hover {
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 20px rgba(59, 130, 246, 0.1);
 }
 
 /* Floating Animation */
@@ -90,5 +89,5 @@ body {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  background-image: linear-gradient(to right, #60a5fa, #a78bfa, #2dd4bf);
+  background-image: linear-gradient(to right, #2563eb, #7c3aed, #0ea5e9);
 }

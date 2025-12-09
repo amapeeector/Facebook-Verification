@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -8,7 +9,7 @@ import { Twitter, Instagram, Facebook, Linkedin, Mail, MapPin, Phone } from 'luc
 
 const Footer: React.FC = () => {
     return (
-        <footer className="border-t border-white/5 bg-slate-950 pt-20 pb-10">
+        <footer className="border-t border-slate-800 bg-slate-950 pt-20 pb-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     <div className="col-span-1 md:col-span-2 space-y-4">
@@ -51,15 +52,15 @@ const Footer: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-600 gap-4">
+                <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
                     <p>&copy; {new Date().getFullYear()} MetaEliteShop. All rights reserved.</p>
                     <div className="flex gap-6">
-                        <a href="#" className="hover:text-slate-400">Privacy Policy</a>
-                        <a href="#" className="hover:text-slate-400">Terms of Service</a>
-                        <a href="#" className="hover:text-slate-400">Refund Policy</a>
+                        <a href="#" className="hover:text-slate-300">Privacy Policy</a>
+                        <a href="#" className="hover:text-slate-300">Terms of Service</a>
+                        <a href="#" className="hover:text-slate-300">Refund Policy</a>
                     </div>
                 </div>
-                <p className="text-center text-[10px] text-slate-700 mt-8">
+                <p className="text-center text-[10px] text-slate-600 mt-8">
                     MetaEliteShop is a consulting agency and is not directly affiliated with Meta Platforms, Inc. The "Blue Tick" is a registered trademark of Meta Platforms, Inc.
                 </p>
             </div>
