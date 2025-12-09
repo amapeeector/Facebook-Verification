@@ -16,7 +16,7 @@ const PACKAGES: PackageItem[] = [
   {
     id: 'fb-std',
     title: 'Facebook Verification',
-    price: 30,
+    price: 130,
     turnaround: '30 Mins - 24 Hours',
     platform: 'Facebook',
     features: ['Instant Doc Submission', 'Waitlist Bypass', 'Admin Configuration', 'Subscription Setup'],
