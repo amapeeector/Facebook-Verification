@@ -1,10 +1,11 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
 
 import { GoogleGenAI } from "@google/genai";
-import { RepoFileTree, Citation } from "../types";
+import { RepoFileTree, Citation, ModelType, BackgroundType } from "../types";
 
 const getAiClient = () => {
   // Use bracket notation to safely access the API key. 
@@ -219,5 +220,112 @@ export async function askNodeSpecificQuestion(
     } catch (error) {
         console.error("Gemini Q&A failed:", error);
         return "Sorry, I encountered an error processing your request.";
+    }
+}
+
+// --- Fashion Studio Functions ---
+
+export async function generateVirtualTryOn(
+    productImageBase64: string,
+    modelType: ModelType,
+    background: BackgroundType,
+    isUltra: boolean
+): Promise<string> {
+    const ai = getAiClient();
+    // Use Pro Image Preview for high fidelity fashion rendering
+    const model = 'gemini-3-pro-image-preview'; 
+
+    const prompt = `
+        Professional Fashion Photography.
+        Task: Create a hyper-realistic Virtual Try-On image.
+        
+        Input: I have provided an image of a clothing item.
+        Action: Generate a full-body shot of a professional ${modelType} fashion model wearing this exact clothing item.
+        
+        Requirements:
+        1. The clothing must retain its exact color, texture, and pattern from the input.
+        2. Fit: The clothing should fit the model naturally and realistically.
+        3. Background: ${background}. High-end commercial lighting.
+        4. Quality: 4k resolution, editorial fashion magazine style.
+        ${isUltra ? '5. Ultra-High detail on fabric physics and lighting reflections.' : ''}
+    `;
+
+    try {
+        const response = await ai.models.generateContent({
+            model,
+            contents: {
+                parts: [
+                    { inlineData: { mimeType: 'image/jpeg', data: productImageBase64 } },
+                    { text: prompt }
+                ]
+            },
+            config: {
+                imageConfig: {
+                    aspectRatio: "3:4", // Portrait for fashion
+                    imageSize: isUltra ? "2K" : "1K"
+                }
+            }
+        });
+
+        let imageData = "";
+        if (response.candidates?.[0]?.content?.parts) {
+            for (const part of response.candidates[0].content.parts) {
+                if (part.inlineData && part.inlineData.data) {
+                    imageData = part.inlineData.data;
+                }
+            }
+        }
+        
+        if (!imageData) throw new Error("Failed to generate fashion image.");
+        return imageData;
+
+    } catch (error) {
+        console.error("Fashion VTO failed:", error);
+        throw error;
+    }
+}
+
+export async function generateFashionVideo(
+    modelImageBase64: string,
+    isUltra: boolean
+): Promise<string> {
+    const ai = getAiClient();
+    // Use VEO model
+    const modelName = isUltra ? 'veo-3.1-generate-preview' : 'veo-3.1-fast-generate-preview';
+    const prompt = "Cinematic fashion runway shot. The model is walking confidently towards the camera. High fashion, slow motion, fabric flowing naturally. Commercial lighting.";
+
+    try {
+        // Veo requires base64 of the starting image
+        let operation = await ai.models.generateVideos({
+            model: modelName,
+            prompt: prompt,
+            image: {
+                imageBytes: modelImageBase64,
+                mimeType: 'image/png' // Assuming the generated image is PNG-compatible
+            },
+            config: {
+                numberOfVideos: 1,
+                resolution: '720p',
+                aspectRatio: '9:16' // Vertical video for social media
+            }
+        });
+
+        // Poll for completion
+        while (!operation.done) {
+            await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5s
+            operation = await ai.operations.getVideosOperation({ operation: operation });
+        }
+
+        const videoUri = operation.response?.generatedVideos?.[0]?.video?.uri;
+        if (!videoUri) throw new Error("Video generation completed but returned no URI.");
+
+        // Append key for frontend access if needed, though usually fetched via proxy or direct link
+        // Note: In a browser environment, we return the URI. The frontend might need to proxy this or fetch with header.
+        // For this demo, we assume the URI is accessible with the key appended or via the client context.
+        return `${videoUri}&key=${process.env['API_KEY']}`;
+
+    } catch (error) {
+        console.error("Fashion Video generation failed:", error);
+        throw error;
     }
 }

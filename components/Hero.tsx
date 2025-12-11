@@ -5,7 +5,7 @@
 */
 
 import React from 'react';
-import { ArrowRight, CheckCircle2, Facebook, Instagram, MessageCircle, MoreHorizontal, ArrowLeft, Phone, Video, Mail, Heart, MessageCircle as Comment } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Facebook, Instagram, MessageCircle, MoreHorizontal, ArrowLeft, Phone, Video, Mail, BadgeCheck } from 'lucide-react';
 
 interface HeroProps {
   onCta: () => void;
@@ -13,7 +13,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onCta }) => {
   return (
-    <div className="relative min-h-[85vh] flex items-center overflow-hidden pt-10 pb-20">
+    <div className="relative min-h-[90vh] flex items-center overflow-hidden pt-10 pb-20">
       
       {/* Background Ambience Dark Mode */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
@@ -25,7 +25,7 @@ const Hero: React.FC<HeroProps> = ({ onCta }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
           {/* Left: Content */}
-          <div className="text-left space-y-8 animate-in slide-in-from-left-8 fade-in duration-1000 order-2 lg:order-1">
+          <div className="text-left space-y-8 animate-in slide-in-from-left-8 fade-in duration-1000 order-2 lg:order-1 relative z-20">
              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 shadow-sm backdrop-blur-sm">
                 <div className="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></div>
                 <span className="text-xs font-bold text-accent-400 tracking-wide uppercase">Instantly Available</span>
@@ -64,147 +64,93 @@ const Hero: React.FC<HeroProps> = ({ onCta }) => {
              </div>
           </div>
 
-          {/* Right: Realistic Mobile Profiles Composition */}
+          {/* Right: Live 3D Holographic Animation */}
           <div className="relative w-full h-[600px] flex items-center justify-center perspective-1000 order-1 lg:order-2">
              
-             {/* 1. Facebook Card (Background Left) */}
-             <div className="absolute top-10 left-0 lg:-left-4 w-[280px] bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl transform -rotate-12 scale-90 opacity-80 z-10 animate-float" style={{ animationDuration: '7s' }}>
-                {/* Cover Photo */}
-                <div className="h-24 bg-gradient-to-r from-blue-900 to-slate-900 relative">
-                   <div className="absolute top-4 left-4 p-1 bg-black/30 rounded-full">
-                      <ArrowLeft className="w-4 h-4 text-white" />
-                   </div>
-                </div>
-                {/* Profile Section */}
-                <div className="px-4 pb-6 -mt-10 relative">
-                    <div className="relative inline-block">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop" className="w-20 h-20 rounded-full border-4 border-slate-900" alt="FB Profile" />
-                        <div className="absolute bottom-1 right-1 bg-white rounded-full p-0.5">
-                           <div className="bg-blue-500 rounded-full p-0.5">
-                             <CheckCircle2 className="w-3 h-3 text-white fill-blue-500" />
-                           </div>
-                        </div>
-                    </div>
-                    <h3 className="text-white font-bold text-lg mt-2 flex items-center gap-1">
-                        Patricia B. <CheckCircle2 className="w-4 h-4 text-blue-500 fill-white" />
-                    </h3>
-                    <p className="text-slate-400 text-xs font-medium">Public Figure</p>
-                    
-                    {/* Bio */}
-                    <div className="mt-3 text-sm text-slate-300">
-                        <p>Verified by MetaEliteShop</p>
-                    </div>
-
-                    <div className="mt-4 flex gap-2">
-                        <button className="flex-1 bg-blue-600 text-white text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1">
-                            <MessageCircle className="w-3 h-3" /> Message
-                        </button>
-                        <button className="flex-1 bg-slate-800 text-slate-300 text-xs font-bold py-2 rounded-lg">
-                            Like
-                        </button>
-                    </div>
-                </div>
-             </div>
-
-             {/* 2. Instagram Card (Center - Hero) */}
-             <div className="relative w-[300px] bg-black border border-slate-800 rounded-[35px] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] z-30 animate-float" style={{ animationDuration: '6s' }}>
-                {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 text-white border-b border-white/5">
-                    <ArrowLeft className="w-5 h-5" />
-                    <span className="font-bold text-sm">tomie.official</span>
-                    <MoreHorizontal className="w-5 h-5" />
-                </div>
+             {/* 3D Core Scene Container */}
+             <div className="relative w-[300px] h-[300px] transform-style-3d">
                 
-                {/* Profile Stats */}
-                <div className="px-5 py-4 flex items-center justify-between">
-                    <div className="relative">
-                        <div className="w-20 h-20 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 to-fuchsia-600">
-                            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop" className="w-full h-full rounded-full border-2 border-black object-cover" alt="IG Profile" />
-                        </div>
+                {/* 1. Central 3D Badge (The Sun) */}
+                <div className="absolute inset-0 flex items-center justify-center transform-style-3d animate-spin-slow">
+                    {/* Front Face */}
+                    <div className="absolute w-40 h-40 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center border-4 border-white/20 shadow-[0_0_80px_rgba(59,130,246,0.6)] backface-hidden translate-z-10">
+                        <BadgeCheck className="w-24 h-24 text-white drop-shadow-md" />
                     </div>
-                    <div className="flex-1 flex justify-around text-center text-white ml-2">
-                        <div>
-                            <div className="font-bold text-lg">1.2M</div>
-                            <div className="text-[10px] text-slate-400">Followers</div>
-                        </div>
-                        <div>
-                            <div className="font-bold text-lg">248</div>
-                            <div className="text-[10px] text-slate-400">Following</div>
+                    {/* Back Face (for 3D depth) */}
+                    <div className="absolute w-40 h-40 rounded-full bg-gradient-to-br from-accent-700 to-accent-900 flex items-center justify-center border-4 border-white/10 transform rotateY-180 translate-z-[-10px]">
+                         <div className="w-24 h-24 rounded-full border-4 border-white/10"></div>
+                    </div>
+                    {/* Glow Ring */}
+                    <div className="absolute inset-[-20px] rounded-full border border-accent-500/30 animate-pulse"></div>
+                </div>
+
+                {/* 2. Orbiting Platforms */}
+                
+                {/* Facebook Orbit */}
+                <div className="absolute inset-0 flex items-center justify-center animate-orbit-1">
+                    <div className="w-16 h-16 rounded-full bg-[#1877F2] flex items-center justify-center shadow-[0_0_30px_rgba(24,119,242,0.6)] border border-white/20 transform hover:scale-110 transition-transform cursor-pointer">
+                        <Facebook className="w-8 h-8 text-white" />
+                        <div className="absolute -top-1 -right-1 bg-white rounded-full p-0.5">
+                            <CheckCircle2 className="w-3 h-3 text-blue-600 fill-white" />
                         </div>
                     </div>
                 </div>
 
-                {/* Bio Section */}
-                <div className="px-5 pb-4">
-                    <div className="flex items-center gap-1 mb-1">
-                        <span className="text-white font-bold text-sm">Tomie Official</span>
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 fill-white" />
+                {/* Instagram Orbit */}
+                <div className="absolute inset-0 flex items-center justify-center animate-orbit-2">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex items-center justify-center shadow-[0_0_30px_rgba(220,39,67,0.6)] border border-white/20 transform hover:scale-110 transition-transform cursor-pointer">
+                        <Instagram className="w-8 h-8 text-white" />
+                        <div className="absolute -top-1 -right-1 bg-white rounded-full p-0.5">
+                            <CheckCircle2 className="w-3 h-3 text-blue-600 fill-white" />
+                        </div>
                     </div>
-                    <p className="text-slate-400 text-xs">Digital Creator</p>
-                    <p className="text-slate-200 text-xs mt-2 leading-relaxed">
-                        Verified by MetaEliteShop 🚀 <br />
-                        Helping brands scale on social media.
-                    </p>
-                    <p className="text-blue-400 text-xs mt-1 font-medium">metaeliteshop.com</p>
                 </div>
 
-                {/* Buttons */}
-                <div className="px-5 flex gap-2 mb-4">
-                    <button className="flex-1 bg-blue-500 text-white text-xs font-bold py-1.5 rounded-lg">Follow</button>
-                    <button className="flex-1 bg-slate-800 text-white text-xs font-bold py-1.5 rounded-lg">Message</button>
+                {/* WhatsApp Orbit */}
+                <div className="absolute inset-0 flex items-center justify-center animate-orbit-3">
+                    <div className="w-16 h-16 rounded-full bg-[#25D366] flex items-center justify-center shadow-[0_0_30px_rgba(37,211,102,0.6)] border border-white/20 transform hover:scale-110 transition-transform cursor-pointer">
+                        <MessageCircle className="w-8 h-8 text-white" />
+                        <div className="absolute -top-1 -right-1 bg-white rounded-full p-0.5">
+                            <CheckCircle2 className="w-3 h-3 text-green-500 fill-white" />
+                        </div>
+                    </div>
                 </div>
 
-                {/* Posts Grid */}
-                <div className="grid grid-cols-3 gap-0.5">
-                    <div className="aspect-square bg-slate-800"><img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=150&h=150&fit=crop" className="w-full h-full object-cover" /></div>
-                    <div className="aspect-square bg-slate-800"><img src="https://images.unsplash.com/photo-1604881991720-f91add269ed8?w=150&h=150&fit=crop" className="w-full h-full object-cover" /></div>
-                    <div className="aspect-square bg-slate-800"><img src="https://images.unsplash.com/photo-1595039838779-f3780873afdd?w=150&h=150&fit=crop" className="w-full h-full object-cover" /></div>
+             </div>
+
+             {/* 3. Floating Background Cards (The Context) */}
+             {/* These float deep in Z-space to provide depth without interfering with the main animation */}
+             
+             {/* IG Profile Card */}
+             <div className="absolute top-0 right-0 w-[220px] bg-slate-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-4 transform rotate-6 translate-z-[-100px] animate-float opacity-60 hover:opacity-100 transition-opacity" style={{ animationDelay: '1s' }}>
+                <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-400 to-fuchsia-600 p-[2px]">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop" className="w-full h-full rounded-full border border-black" />
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-1">
+                            <span className="text-white text-xs font-bold">silvaqueen15</span>
+                            <CheckCircle2 className="w-3 h-3 text-blue-500 fill-white" />
+                        </div>
+                        <p className="text-[10px] text-slate-400">Verified by MetaElite</p>
+                    </div>
                 </div>
              </div>
 
-             {/* 3. WhatsApp Card (Foreground Right) */}
-             <div className="absolute -bottom-4 right-0 lg:right-4 w-[280px] bg-white rounded-3xl overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transform rotate-6 scale-95 z-40 animate-float" style={{ animationDuration: '8s', animationDelay: '1s' }}>
-                  {/* WA Header */}
-                  <div className="bg-[#075E54] px-4 py-3 flex items-center gap-3">
-                      <ArrowLeft className="w-5 h-5 text-white" />
-                      <div className="flex-1">
-                          <h4 className="text-white font-bold text-sm">Business Info</h4>
-                      </div>
-                      <MoreHorizontal className="w-5 h-5 text-white" />
-                  </div>
-
-                  {/* Profile Info */}
-                  <div className="p-4 text-center border-b border-slate-100">
-                      <div className="w-20 h-20 mx-auto rounded-full p-1 bg-slate-100 mb-2">
-                         <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop" className="w-full h-full rounded-full object-cover" alt="WA Profile" />
-                      </div>
-                      <h3 className="text-slate-900 font-bold text-lg flex items-center justify-center gap-1">
-                          Honey World <CheckCircle2 className="w-4 h-4 text-green-500 fill-white" />
-                      </h3>
-                      <p className="text-slate-500 text-xs">Shopping & Retail</p>
-                  </div>
-
-                  {/* Verified Bio */}
-                  <div className="p-4 bg-slate-50">
-                      <p className="text-[10px] uppercase text-slate-400 font-bold tracking-wider mb-1">About</p>
-                      <p className="text-slate-800 text-sm font-medium">Verified by MetaEliteShop</p>
-                      <p className="text-slate-400 text-[10px] mt-1">Official Business Account</p>
-                  </div>
-                  
-                  <div className="p-4 grid grid-cols-3 gap-4 text-center text-[#075E54]">
-                        <div className="flex flex-col items-center gap-1">
-                            <Phone className="w-5 h-5" />
-                            <span className="text-[10px]">Audio</span>
+             {/* FB Profile Card */}
+             <div className="absolute bottom-10 -left-10 w-[220px] bg-slate-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-4 transform -rotate-6 translate-z-[-150px] animate-float opacity-60 hover:opacity-100 transition-opacity" style={{ animationDelay: '3s' }}>
+                <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-600 p-[2px]">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" className="w-full h-full rounded-full border border-black" />
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-1">
+                            <span className="text-white text-xs font-bold">Patricia B.</span>
+                            <CheckCircle2 className="w-3 h-3 text-blue-500 fill-white" />
                         </div>
-                        <div className="flex flex-col items-center gap-1">
-                            <Video className="w-5 h-5" />
-                            <span className="text-[10px]">Video</span>
-                        </div>
-                        <div className="flex flex-col items-center gap-1">
-                            <Mail className="w-5 h-5" />
-                            <span className="text-[10px]">Email</span>
-                        </div>
-                  </div>
+                        <p className="text-[10px] text-slate-400">Public Figure</p>
+                    </div>
+                </div>
              </div>
 
           </div>

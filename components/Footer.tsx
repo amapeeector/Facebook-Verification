@@ -5,9 +5,13 @@
 */
 
 import React from 'react';
-import { Twitter, Instagram, Facebook, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { Twitter, Instagram, Facebook, Linkedin, Mail, MapPin, Phone, BarChart2 } from 'lucide-react';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+    onNavigate?: (mode: any) => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
     return (
         <footer className="border-t border-white/5 bg-slate-950 pt-20 pb-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,10 +58,14 @@ const Footer: React.FC = () => {
 
                 <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
                     <p>&copy; {new Date().getFullYear()} MetaEliteShop. All rights reserved.</p>
-                    <div className="flex gap-6">
+                    <div className="flex gap-6 items-center">
                         <a href="#" className="hover:text-slate-300">Privacy Policy</a>
                         <a href="#" className="hover:text-slate-300">Terms of Service</a>
-                        <a href="#" className="hover:text-slate-300">Refund Policy</a>
+                        {onNavigate && (
+                             <button onClick={() => onNavigate('ANALYTICS')} className="hover:text-accent-400 flex items-center gap-1">
+                                <BarChart2 className="w-3 h-3" /> Site Analytics
+                             </button>
+                        )}
                     </div>
                 </div>
                 <p className="text-center text-[10px] text-slate-600 mt-8">

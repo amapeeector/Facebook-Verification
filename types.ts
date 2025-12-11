@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -31,6 +32,8 @@ export interface VerificationFormData {
   targetUrl: string;
   notes: string;
   packageId: string;
+  bmId: string;
+  isAdmin: boolean;
 }
 
 export interface AiCopyResult {
@@ -39,10 +42,13 @@ export interface AiCopyResult {
 
 export enum ViewMode {
     HOME = 'HOME',
+    TOOLS_DASHBOARD = 'TOOLS_DASHBOARD',
     REPO_ANALYZER = 'REPO_ANALYZER',
     ARTICLE_INFOGRAPHIC = 'ARTICLE_INFOGRAPHIC',
     DEV_STUDIO = 'DEV_STUDIO',
-    IMAGE_EDITOR = 'IMAGE_EDITOR'
+    IMAGE_EDITOR = 'IMAGE_EDITOR',
+    FASHION_STUDIO = 'FASHION_STUDIO',
+    ANALYTICS = 'ANALYTICS'
 }
 
 export interface RepoFileTree {
@@ -106,6 +112,20 @@ export interface DevStudioState {
     repoName: string;
     fileTree: RepoFileTree[];
     graphData: DataFlowGraph;
+}
+
+// Fashion Studio Types
+export type FashionTier = 'Free' | 'Pro' | 'Ultra';
+export type ModelType = 'Female' | 'Male' | 'Diverse' | 'Mannequin';
+export type BackgroundType = 'Studio White' | 'Urban Street' | 'Luxury Interior' | 'Beach';
+
+export interface FashionJob {
+    id: string;
+    originalImage: string;
+    generatedImage?: string;
+    generatedVideo?: string; // URL to video
+    status: 'queue' | 'processing' | 'completed' | 'failed';
+    type: 'image' | 'video';
 }
 
 declare global {
