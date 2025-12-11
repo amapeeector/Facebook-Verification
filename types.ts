@@ -48,7 +48,8 @@ export enum ViewMode {
     DEV_STUDIO = 'DEV_STUDIO',
     IMAGE_EDITOR = 'IMAGE_EDITOR',
     FASHION_STUDIO = 'FASHION_STUDIO',
-    ANALYTICS = 'ANALYTICS'
+    ANALYTICS = 'ANALYTICS',
+    TRENDS = 'TRENDS'
 }
 
 export interface RepoFileTree {

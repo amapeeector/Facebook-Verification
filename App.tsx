@@ -15,7 +15,8 @@ import Home from './components/Home';
 import FashionStudio from './components/FashionStudio';
 import ToolsDashboard from './components/ToolsDashboard';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
-import { BadgeCheck, Menu, X, Palette, Sparkles, Home as HomeIcon } from 'lucide-react';
+import TrendsPage from './components/TrendsPage';
+import { BadgeCheck, Menu, X, Palette, Sparkles, Home as HomeIcon, TrendingUp } from 'lucide-react';
 import { PackageItem, ViewMode, ArticleHistoryItem, RepoHistoryItem, DevStudioState } from './types';
 
 // Theme Definitions
@@ -125,6 +126,13 @@ const App: React.FC = () => {
                   <HomeIcon className="w-4 h-4" /> Services
               </button>
               
+              <button 
+                onClick={() => handleNavigate(ViewMode.TRENDS)}
+                className={`text-sm font-medium transition-colors flex items-center gap-2 ${viewMode === ViewMode.TRENDS ? 'text-white' : 'text-slate-400 hover:text-white'}`}
+              >
+                  <TrendingUp className="w-4 h-4" /> Trends & News
+              </button>
+
               <div className="h-4 w-px bg-white/10"></div>
               
               <button 
@@ -157,6 +165,12 @@ const App: React.FC = () => {
                       <HomeIcon className="w-5 h-5" /> Services
                   </button>
                   <button 
+                    onClick={() => handleNavigate(ViewMode.TRENDS)}
+                    className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${viewMode === ViewMode.TRENDS ? 'bg-white/10 text-white' : 'text-slate-400'}`}
+                  >
+                      <TrendingUp className="w-5 h-5" /> Trends
+                  </button>
+                  <button 
                     onClick={() => handleNavigate(ViewMode.TOOLS_DASHBOARD)}
                     className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${viewMode === ViewMode.TOOLS_DASHBOARD ? 'bg-fuchsia-500/10 text-fuchsia-300' : 'text-slate-400'}`}
                   >
@@ -170,6 +184,9 @@ const App: React.FC = () => {
       <main className="flex-1 relative pt-8 px-4">
         {viewMode === ViewMode.HOME && (
              <Home onNavigate={handleNavigate} />
+        )}
+        {viewMode === ViewMode.TRENDS && (
+             <TrendsPage />
         )}
         {viewMode === ViewMode.TOOLS_DASHBOARD && (
              <ToolsDashboard onNavigate={handleNavigate} />
