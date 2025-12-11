@@ -33,16 +33,14 @@ const LANGUAGES = [
   { label: "Spanish (Mexico)", value: "Spanish" },
   { label: "French (France)", value: "French" },
   { label: "Hindi (India)", value: "Hindi" },
-  { label: "Indonesian (Indonesia)", value: "Indonesian" },
-  { label: "Italian (Italy)", value: "Italian" },
-  { label: "Japanese (Japan)", value: "Japanese" },
-  { label: "Korean (South Korea)", value: "Korean" },
-  { label: "Portuguese (Brazil)", value: "Portuguese" },
-  { label: "Russian (Russia)", value: "Russian" },
-  { label: "Ukrainian (Ukraine)", value: "Ukrainian" },
-  { label: "Vietnamese (Vietnam)", value: "Vietnamese" },
   { label: "Chinese (China)", value: "Chinese" },
 ];
+
+// Helper to handle both Base64 and URL image sources
+const getImageSrc = (data: string) => {
+    if (data.startsWith('http')) return data;
+    return `data:image/png;base64,${data}`;
+};
 
 const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddToHistory }) => {
   const [repoInput, setRepoInput] = useState('');
@@ -89,10 +87,6 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
      onAddToHistory(newItem);
   };
 
-  const handleApiError = (err: any) => {
-      setError(err.message || 'An unexpected error occurred during analysis.');
-  }
-
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -119,17 +113,17 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
       
       const styleToUse = selectedStyle === 'Custom' ? customStyle : selectedStyle;
 
-      const infographicBase64 = await generateInfographic(repoDetails.repo, fileTree, styleToUse, false, selectedLanguage);
+      const imageData = await generateInfographic(repoDetails.repo, fileTree, styleToUse, false, selectedLanguage);
       
-      if (infographicBase64) {
-        setInfographicData(infographicBase64);
-        addToHistory(repoDetails.repo, infographicBase64, false, styleToUse);
+      if (imageData) {
+        setInfographicData(imageData);
+        addToHistory(repoDetails.repo, imageData, false, styleToUse);
       } else {
           throw new Error("Failed to generate visual.");
       }
 
     } catch (err: any) {
-      handleApiError(err);
+      setError(err.message || 'An unexpected error occurred during analysis.');
     } finally {
       setLoading(false);
       setLoadingStage('');
@@ -140,7 +134,6 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
     if (!currentFileTree || !currentRepoName) return;
     setGenerating3D(true);
     try {
-      // Pass the same selected style to the 3D generator
       const styleToUse = selectedStyle === 'Custom' ? customStyle : selectedStyle;
       const data = await generateInfographic(currentRepoName, currentFileTree, styleToUse, true, selectedLanguage);
       if (data) {
@@ -148,7 +141,7 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
           addToHistory(currentRepoName, data, true, styleToUse);
       }
     } catch (err: any) {
-      handleApiError(err);
+      setError(err.message);
     } finally {
       setGenerating3D(false);
     }
@@ -157,14 +150,11 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
   const loadFromHistory = (item: RepoHistoryItem) => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setCurrentRepoName(item.repoName);
-      // Since history items don't store the full file tree (too large), we just show the image.
-      // If user wants to generate 3D from history of a 2D, they'd need to re-fetch.
-      // For simplicity, we display the historical image in the appropriate slot.
       if (item.is3D) {
           setInfographic3DData(item.imageData);
       } else {
           setInfographicData(item.imageData);
-          setInfographic3DData(null); // Clear 3D if loading a 2D history item to avoid confusion
+          setInfographic3DData(null);
       }
   };
 
@@ -214,9 +204,7 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
              </div>
           </div>
 
-          {/* Controls: Style and Language */}
           <div className="mt-2 pt-2 border-t border-white/5 px-3 pb-1 space-y-3">
-             {/* Style Selector */}
              <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
                  <div className="flex items-center gap-1.5 text-slate-500 font-mono text-[10px] uppercase tracking-wider shrink-0">
                      <Palette className="w-3 h-3" /> Style:
@@ -239,7 +227,6 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
                  </div>
              </div>
              
-             {/* Language Selector & Custom Style Input */}
              <div className="flex flex-wrap gap-3">
                <div className="flex items-center gap-2 bg-slate-950/50 border border-white/10 rounded-lg px-2 py-1 shrink-0 min-w-0 max-w-full">
                   <Globe className="w-3 h-3 text-slate-500 shrink-0" />
@@ -255,16 +242,6 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
                     ))}
                   </select>
                </div>
-
-               {selectedStyle === 'Custom' && (
-                   <input 
-                      type="text" 
-                      value={customStyle}
-                      onChange={(e) => setCustomStyle(e.target.value)}
-                      placeholder="Custom style..."
-                      className="flex-1 min-w-[120px] bg-slate-950/50 border border-white/10 rounded-lg px-3 py-1 text-xs text-slate-200 placeholder:text-slate-600 focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/50 font-mono transition-all"
-                   />
-               )}
              </div>
           </div>
         </form>
@@ -281,7 +258,6 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
         <LoadingState message={loadingStage} type="repo" />
       )}
 
-      {/* Results Section */}
       {infographicData && !loading && (
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
           
@@ -294,21 +270,20 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
                     </h3>
                     <div className="flex items-center gap-2">
                       <button 
-                        onClick={() => setFullScreenImage({src: `data:image/png;base64,${infographicData}`, alt: `${currentRepoName} 2D`})}
+                        onClick={() => setFullScreenImage({src: getImageSrc(infographicData), alt: `${currentRepoName} 2D`})}
                         className="text-xs flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-mono p-1.5 rounded-lg hover:bg-white/10"
                         title="Full Screen"
                       >
                         <Maximize className="w-4 h-4" />
                       </button>
-                      <a href={`data:image/png;base64,${infographicData}`} download={`${currentRepoName}-infographic-2d.png`} className="text-xs flex items-center gap-2 text-slate-300 hover:text-white transition-colors font-mono bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 border border-white/10 font-semibold">
+                      <a href={getImageSrc(infographicData)} download={`${currentRepoName}-infographic-2d.png`} className="text-xs flex items-center gap-2 text-slate-300 hover:text-white transition-colors font-mono bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 border border-white/10 font-semibold">
                         <Download className="w-3 h-3" /> Save PNG
                       </a>
                     </div>
                 </div>
                 <div className="rounded-2xl overflow-hidden bg-[#eef8fe] relative group border border-slate-200/10">
-                    {selectedStyle === "Neon Cyberpunk" && <div className="absolute inset-0 bg-slate-950 pointer-events-none mix-blend-multiply" />}
                     <div className="absolute inset-0 bg-slate-950/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                    <img src={`data:image/png;base64,${infographicData}`} alt="Repository Flow Diagram" className="w-full h-auto object-cover transition-opacity relative z-10" />
+                    <img src={getImageSrc(infographicData)} alt="Repository Flow Diagram" className="w-full h-auto object-cover transition-opacity relative z-10" />
                 </div>
               </div>
 
@@ -321,13 +296,13 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
                     {infographic3DData && (
                       <div className="flex items-center gap-2 animate-in fade-in">
                         <button 
-                            onClick={() => setFullScreenImage({src: `data:image/png;base64,${infographic3DData}`, alt: `${currentRepoName} 3D`})}
+                            onClick={() => setFullScreenImage({src: getImageSrc(infographic3DData), alt: `${currentRepoName} 3D`})}
                             className="text-xs flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-mono p-1.5 rounded-lg hover:bg-white/10"
                             title="Full Screen"
                         >
                             <Maximize className="w-4 h-4" />
                         </button>
-                        <a href={`data:image/png;base64,${infographic3DData}`} download={`${currentRepoName}-infographic-3d.png`} className="text-xs flex items-center gap-2 text-slate-300 hover:text-white transition-colors font-mono bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 border border-white/10 font-semibold">
+                        <a href={getImageSrc(infographic3DData)} download={`${currentRepoName}-infographic-3d.png`} className="text-xs flex items-center gap-2 text-slate-300 hover:text-white transition-colors font-mono bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 border border-white/10 font-semibold">
                           <Download className="w-3 h-3" /> Save PNG
                         </a>
                       </div>
@@ -338,7 +313,7 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
                   {infographic3DData ? (
                       <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
                          <div className="absolute inset-0 bg-slate-950/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
-                         <img src={`data:image/png;base64,${infographic3DData}`} alt="Repository 3D Flow Diagram" className="w-full h-full object-cover animate-in fade-in transition-opacity relative z-20" />
+                         <img src={getImageSrc(infographic3DData)} alt="Repository 3D Flow Diagram" className="w-full h-full object-cover animate-in fade-in transition-opacity relative z-20" />
                       </div>
                   ) : generating3D ? (
                     <div className="flex flex-col items-center justify-center gap-4 p-6 text-center animate-in fade-in">
@@ -363,7 +338,6 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
         </div>
       )}
 
-      {/* History Section */}
       {history.length > 0 && (
           <div className="pt-12 border-t border-white/5 animate-in fade-in">
               <div className="flex items-center gap-2 mb-6 text-slate-400">
@@ -378,7 +352,7 @@ const RepoAnalyzer: React.FC<RepoAnalyzerProps> = ({ onNavigate, history, onAddT
                         className="group bg-slate-900/50 border border-white/5 hover:border-violet-500/50 rounded-xl overflow-hidden text-left transition-all hover:shadow-neon-violet"
                       >
                           <div className="aspect-video relative overflow-hidden bg-slate-950">
-                              <img src={`data:image/png;base64,${item.imageData}`} alt={item.repoName} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                              <img src={getImageSrc(item.imageData)} alt={item.repoName} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
                               {item.is3D && (
                                   <div className="absolute top-2 right-2 bg-fuchsia-500/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10">3D</div>
                               )}

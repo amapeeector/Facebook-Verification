@@ -9,6 +9,11 @@ import { generateVirtualTryOn, generateFashionVideo } from '../services/geminiSe
 import { FashionTier, ModelType, BackgroundType, FashionJob } from '../types';
 import { Upload, Shirt, Video, Loader2, Crown, Zap, Lock, Sparkles, Download, Wand2, Hash } from 'lucide-react';
 
+const getImageSrc = (data: string) => {
+    if (data.startsWith('http')) return data;
+    return `data:image/jpeg;base64,${data}`;
+};
+
 const FashionStudio: React.FC = () => {
     const [tier, setTier] = useState<FashionTier>('Free'); // Default tier
     const [jobs, setJobs] = useState<FashionJob[]>([]);
@@ -25,9 +30,7 @@ const FashionStudio: React.FC = () => {
     const checkPmc = (code: string) => {
         setPmcCode(code);
         if (code.toUpperCase() === '#PMC') {
-            // Unlock Ultra mode for demo/engagement
             setTier('Ultra');
-            // Flash effect or toast could go here
         }
     };
 
@@ -46,13 +49,11 @@ const FashionStudio: React.FC = () => {
             const newJobs: FashionJob[] = Array.from(files)
                 .filter(file => file.type.startsWith('image/'))
                 .map(file => {
-                    // Create object URL for preview
                     const url = URL.createObjectURL(file);
-                    // In a real app, we'd convert to base64 here or inside the process loop
                     return {
                         id: Math.random().toString(36).substr(2, 9),
                         originalImage: url,
-                        fileObj: file, // Temporary storage to read later
+                        fileObj: file,
                         status: 'queue',
                         type: 'image'
                     } as any; 
@@ -71,36 +72,30 @@ const FashionStudio: React.FC = () => {
         const queue = jobs.filter(j => j.status === 'queue');
         if (queue.length === 0) return;
 
-        // Mark as processing
         setJobs(prev => prev.map(j => j.status === 'queue' ? { ...j, status: 'processing' } : j));
 
-        // Process in parallel (batching)
-        // Note: For Ultra users we might process more at once, but limited by browser usually
         await Promise.all(queue.map(async (job) => {
             try {
-                // Convert file to base64
                 const base64 = await new Promise<string>((resolve) => {
                     const reader = new FileReader();
                     // @ts-ignore
                     reader.onload = () => resolve((reader.result as string).split(',')[1]);
                     // @ts-ignore
-                    reader.readAsDataURL(job.fileObj); // stored in the prev step hack
+                    reader.readAsDataURL(job.fileObj);
                 });
 
-                // Generate Image
                 const isUltra = tier === 'Ultra';
-                const resultBase64 = await generateVirtualTryOn(base64, selectedModel, selectedBg, isUltra);
+                const resultData = await generateVirtualTryOn(base64, selectedModel, selectedBg, isUltra);
                 
                 let videoUrl = undefined;
                 if (generateVideo && (tier === 'Pro' || tier === 'Ultra')) {
-                    // Chain video generation
-                    videoUrl = await generateFashionVideo(resultBase64, isUltra);
+                    videoUrl = await generateFashionVideo(resultData, isUltra);
                 }
 
                 setJobs(prev => prev.map(j => j.id === job.id ? {
                     ...j,
                     status: 'completed',
-                    generatedImage: resultBase64,
+                    generatedImage: resultData,
                     generatedVideo: videoUrl,
                     type: videoUrl ? 'video' : 'image'
                 } : j));
@@ -290,7 +285,7 @@ const FashionStudio: React.FC = () => {
                                                 autoPlay loop muted playsInline 
                                             />
                                         ) : (
-                                            <img src={`data:image/jpeg;base64,${job.generatedImage}`} className="w-full h-full object-cover animate-in fade-in duration-700" alt="Generated" />
+                                            <img src={getImageSrc(job.generatedImage!)} className="w-full h-full object-cover animate-in fade-in duration-700" alt="Generated" />
                                         )
                                     ) : (
                                         <img src={job.originalImage} className="w-full h-full object-cover opacity-50 grayscale" alt="Original" />
@@ -301,7 +296,7 @@ const FashionStudio: React.FC = () => {
                                         {job.status === 'completed' && (
                                             <>
                                                 {job.generatedImage && (
-                                                    <a href={`data:image/jpeg;base64,${job.generatedImage}`} download="fashion-vto.jpg" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 text-white backdrop-blur-md">
+                                                    <a href={getImageSrc(job.generatedImage)} download="fashion-vto.jpg" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 text-white backdrop-blur-md">
                                                         <Download className="w-5 h-5" />
                                                     </a>
                                                 )}

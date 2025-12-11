@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -15,6 +16,11 @@ const STYLE_PRESETS = [
   "Futuristic HUD",
   "Vintage Sci-Fi"
 ];
+
+const getImageSrc = (data: string) => {
+    if (data.startsWith('http')) return data;
+    return `data:image/png;base64,${data}`;
+};
 
 interface ImageEditorProps {
   initialState?: { data: string; mimeType: string } | null;
@@ -62,9 +68,9 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ initialState, onNavigate }) =
 
     setProcessing(true);
     try {
-      const resultBase64 = await editImageWithGemini(imageData, mimeType, prompt);
-      if (resultBase64) {
-        setEditedImageData(resultBase64);
+      const resultData = await editImageWithGemini(imageData, mimeType, prompt);
+      if (resultData) {
+        setEditedImageData(resultData);
       } else {
         alert('Could not generate edited image.');
       }
@@ -196,7 +202,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ initialState, onNavigate }) =
                     <p className="text-pink-300 font-mono text-xs animate-pulse tracking-widest">PROCESSING...</p>
                 </div>
                 ) : editedImageData ? (
-                <img src={`data:image/png;base64,${editedImageData}`} alt="Edited" className="h-full w-full object-contain animate-in fade-in zoom-in-95 duration-700" />
+                <img src={getImageSrc(editedImageData)} alt="Edited" className="h-full w-full object-contain animate-in fade-in zoom-in-95 duration-700" />
                 ) : (
                 <div className="text-center text-slate-700 flex flex-col items-center">
                     <ImageIcon className="w-12 h-12 opacity-20 mb-4" />
@@ -208,7 +214,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ initialState, onNavigate }) =
 
           {editedImageData && !processing && (
             <a 
-              href={`data:image/png;base64,${editedImageData}`}
+              href={getImageSrc(editedImageData)}
               download="edited-image.png"
               className="glass-panel w-full py-3 text-white hover:bg-white/10 rounded-xl font-bold text-center transition-all flex items-center justify-center gap-2 font-mono text-sm"
             >

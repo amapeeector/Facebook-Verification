@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -30,16 +31,13 @@ const LANGUAGES = [
   { label: "Spanish (Mexico)", value: "Spanish" },
   { label: "French (France)", value: "French" },
   { label: "Hindi (India)", value: "Hindi" },
-  { label: "Indonesian (Indonesia)", value: "Indonesian" },
-  { label: "Italian (Italy)", value: "Italian" },
-  { label: "Japanese (Japan)", value: "Japanese" },
-  { label: "Korean (South Korea)", value: "Korean" },
-  { label: "Portuguese (Brazil)", value: "Portuguese" },
-  { label: "Russian (Russia)", value: "Russian" },
-  { label: "Ukrainian (Ukraine)", value: "Ukrainian" },
-  { label: "Vietnamese (Vietnam)", value: "Vietnamese" },
   { label: "Chinese (China)", value: "Chinese" },
 ];
+
+const getImageSrc = (data: string) => {
+    if (data.startsWith('http')) return data;
+    return `data:image/png;base64,${data}`;
+};
 
 const ArticleToInfographic: React.FC<ArticleToInfographicProps> = ({ history, onAddToHistory }) => {
   const [urlInput, setUrlInput] = useState('');
@@ -187,7 +185,7 @@ const ArticleToInfographic: React.FC<ArticleToInfographicProps> = ({ history, on
                      )}
                 </div>
 
-                 {/* Language Selector - CSS Fixed for wrapping */}
+                 {/* Language Selector */}
                  <div className="space-y-4 min-w-0">
                      <label className="text-xs text-emerald-400 font-mono tracking-wider flex items-center gap-2">
                         <Globe className="w-4 h-4" /> OUTPUT_LANGUAGE
@@ -242,21 +240,20 @@ const ArticleToInfographic: React.FC<ArticleToInfographicProps> = ({ history, on
                 </h3>
                 <div className="flex items-center gap-2">
                     <button 
-                        onClick={() => setFullScreenImage({src: `data:image/png;base64,${imageData}`, alt: "Article Sketch"})}
+                        onClick={() => setFullScreenImage({src: getImageSrc(imageData), alt: "Article Sketch"})}
                         className="text-xs flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-mono p-1.5 rounded-lg hover:bg-white/10"
                         title="Full Screen"
                     >
                         <Maximize className="w-4 h-4" />
                     </button>
-                    <a href={`data:image/png;base64,${imageData}`} download="site-sketch.png" className="text-xs flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors font-mono bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20 font-bold">
+                    <a href={getImageSrc(imageData)} download="site-sketch.png" className="text-xs flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors font-mono bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20 font-bold">
                         <Download className="w-4 h-4" /> DOWNLOAD_PNG
                     </a>
                 </div>
             </div>
             <div className="rounded-2xl overflow-hidden bg-[#eef8fe] relative group">
-                 {selectedStyle === "Dark Mode Tech" && <div className="absolute inset-0 bg-slate-950 pointer-events-none mix-blend-multiply" />}
                 <div className="absolute inset-0 bg-slate-950/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                <img src={`data:image/png;base64,${imageData}`} alt="Generated Infographic" className="w-full h-auto object-contain max-h-[800px] mx-auto relative z-10" />
+                <img src={getImageSrc(imageData)} alt="Generated Infographic" className="w-full h-auto object-contain max-h-[800px] mx-auto relative z-10" />
             </div>
 
              {/* Featured Citations Section */}
@@ -317,7 +314,6 @@ const ArticleToInfographic: React.FC<ArticleToInfographicProps> = ({ history, on
         </div>
       )}
       
-      {/* History Section */}
       {history.length > 0 && (
           <div className="pt-12 border-t border-white/5 animate-in fade-in">
               <div className="flex items-center gap-2 mb-6 text-slate-400">
@@ -332,7 +328,7 @@ const ArticleToInfographic: React.FC<ArticleToInfographicProps> = ({ history, on
                         className="group bg-slate-900/50 border border-white/5 hover:border-emerald-500/50 rounded-xl overflow-hidden text-left transition-all hover:shadow-neon-emerald"
                       >
                           <div className="aspect-video relative overflow-hidden bg-slate-950">
-                              <img src={`data:image/png;base64,${item.imageData}`} alt={item.title} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                              <img src={getImageSrc(item.imageData)} alt={item.title} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
                           </div>
                           <div className="p-3">
                               <p className="text-xs font-bold text-white truncate font-mono">{item.title}</p>
