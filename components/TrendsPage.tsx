@@ -23,6 +23,28 @@ interface Article {
 // --- Data ---
 const ARTICLES: Article[] = [
     {
+        id: 7,
+        title: "How do I connect the Facebook Messenger with Superchat",
+        excerpt: "A comprehensive guide on integrating your Facebook Page messages directly into the Superchat dashboard for unified customer support.",
+        content: [
+            "Connecting Facebook Messenger to Superchat allows you to manage all your customer conversations in one place. This integration streamlines your support workflow and ensures no message goes unanswered.",
+            "## Prerequisites",
+            "You must be an admin of the Facebook Page you wish to connect. Ensure you have the necessary permissions in Meta Business Suite before attempting the connection.",
+            "## Step-by-Step Integration",
+            "1. **Log in to Superchat:** Navigate to your dashboard and go to 'Settings' > 'Channels'.",
+            "2. **Select Facebook Messenger:** Click on the 'Add Channel' button and select 'Facebook Messenger' from the list of available integrations.",
+            "3. **Authorize Permissions:** You will be redirected to Facebook. Log in and grant Superchat permission to manage your pages and messages.",
+            "4. **Select Page:** Choose the specific Facebook Page you want to connect and click 'Save'.",
+            "## Troubleshooting",
+            "If messages aren't appearing, check your Page settings in Facebook to ensure 'Handover Protocol' is correctly configured."
+        ],
+        category: "Integrations",
+        date: "Dec 12, 2025",
+        author: "Superchat Help",
+        tags: ["Facebook Messenger", "Superchat", "Integration", "Customer Support"],
+        image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=1200&h=800&fit=crop"
+    },
+    {
         id: 1,
         title: "How to Get Meta Verified on Instagram in 2025: The Ultimate Guide",
         excerpt: "Step-by-step instructions on securing the blue tick for your Instagram profile using the new Meta Verified subscription model versus legacy verification.",

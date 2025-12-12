@@ -61,20 +61,21 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         e.preventDefault();
         setLoading(true);
         setError(null);
-
-        const newOrderId = `VIP-${Math.floor(Math.random() * 9000) + 1000}`;
+    
+        const newOrderId = `VIP-${Date.now().toString().slice(-6)}`;
         setOrderId(newOrderId);
-
-        // Standard FormData submission for maximum compatibility with Formspree
+    
         const formBody = new FormData();
+    
+        // Critical for email delivery
         formBody.append("email", formData.email);
         formBody.append("_replyto", formData.email);
-        formBody.append("_subject", `New Order #${newOrderId} - ${selectedPackage?.title}`);
-        
-        // Data Fields
+        formBody.append("_subject", `NEW ORDER #${newOrderId} - ${selectedPackage?.title}`);
+    
+        // Core order data
         formBody.append("order_id", newOrderId);
         formBody.append("package_name", selectedPackage?.title || "Unknown");
-        formBody.append("package_price", selectedPackage?.price ? `$${selectedPackage.price}` : "0");
+        formBody.append("package_price", `$${selectedPackage?.price ?? 0}`);
         formBody.append("client_name", formData.fullName);
         formBody.append("client_phone", formData.phone);
         formBody.append("client_country", formData.country);
@@ -84,38 +85,38 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         formBody.append("payment_method", paymentMethod);
         formBody.append("transaction_ref", paymentMethod !== 'CARD' ? formData.trxId : "Card Pending");
         formBody.append("timestamp", new Date().toLocaleString());
-        formBody.append("message", `Order for ${selectedPackage?.title}. Client: ${formData.fullName}`);
-
+    
+        // Rich readable body
+        formBody.append("message", `
+    🆕 NEW ORDER #${newOrderId}
+    Package: ${selectedPackage?.title} ($${selectedPackage?.price})
+    Client: ${formData.fullName}
+    Contact: ${formData.email} | ${formData.phone} | ${formData.country}
+    Target: ${formData.targetUrl}
+    BM ID: ${formData.bmId}
+    Admin Access: ${formData.isAdmin ? "Confirmed" : "Not Confirmed"}
+    Payment: ${paymentMethod} ${formData.trxId ? `- Trx: ${formData.trxId}` : ""}
+        `.trim());
+    
         try {
             const response = await fetch("https://formspree.io/f/meoylpzj", {
                 method: "POST",
                 body: formBody,
-                headers: { 
-                    "Accept": "application/json"
-                    // IMPORTANT: Do NOT set Content-Type header here. 
-                    // The browser will automatically set it to multipart/form-data with the correct boundary.
+                headers: {
+                    "Accept": "application/json"  // ONLY this header when using FormData
                 }
             });
-
+    
             if (response.ok) {
-                setLoading(false);
                 setStep(2);
             } else {
                 const data = await response.json().catch(() => ({}));
-                if (data && data.errors) {
-                    if (Array.isArray(data.errors)) {
-                        setError(data.errors.map((error: any) => error.message).join(", "));
-                    } else {
-                        setError("Submission problem. Please check your email address and try again.");
-                    }
-                } else {
-                    setError("Unable to submit form. The server rejected the request.");
-                }
-                setLoading(false);
+                const msg = data.errors?.map((e: any) => e.message).join(", ") || "Submission rejected – contact support";
+                setError(msg);
             }
-        } catch (error) {
-            console.error("Form Submission Error:", error);
-            setError("Connection error. Please try again.");
+        } catch (err) {
+            setError("Network failed – retry or hit support");
+        } finally {
             setLoading(false);
         }
     };
