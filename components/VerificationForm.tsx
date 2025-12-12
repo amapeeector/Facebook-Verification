@@ -65,11 +65,13 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         const newOrderId = `VIP-${Math.floor(Math.random() * 9000) + 1000}`;
         setOrderId(newOrderId);
 
-        // Using FormData is more robust for Formspree than JSON
-        // It avoids issues with Content-Type headers and CORS preflights in some environments
+        // Standard FormData submission for maximum compatibility with Formspree
         const formBody = new FormData();
-        formBody.append("email", formData.email); 
+        formBody.append("email", formData.email);
+        formBody.append("_replyto", formData.email);
         formBody.append("_subject", `New Order #${newOrderId} - ${selectedPackage?.title}`);
+        
+        // Data Fields
         formBody.append("order_id", newOrderId);
         formBody.append("package_name", selectedPackage?.title || "Unknown");
         formBody.append("package_price", selectedPackage?.price ? `$${selectedPackage.price}` : "0");
@@ -82,6 +84,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         formBody.append("payment_method", paymentMethod);
         formBody.append("transaction_ref", paymentMethod !== 'CARD' ? formData.trxId : "Card Pending");
         formBody.append("timestamp", new Date().toLocaleString());
+        formBody.append("message", `Order for ${selectedPackage?.title}. Client: ${formData.fullName}`);
 
         try {
             const response = await fetch("https://formspree.io/f/meoylpzj", {
@@ -89,6 +92,8 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                 body: formBody,
                 headers: { 
                     "Accept": "application/json"
+                    // IMPORTANT: Do NOT set Content-Type header here. 
+                    // The browser will automatically set it to multipart/form-data with the correct boundary.
                 }
             });
 
@@ -96,13 +101,15 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                 setLoading(false);
                 setStep(2);
             } else {
-                const data = await response.json();
+                const data = await response.json().catch(() => ({}));
                 if (data && data.errors) {
-                    // Formspree validation errors
-                    const messages = data.errors.map((err: any) => err.message).join(", ");
-                    setError(`Submission failed: ${messages}`);
+                    if (Array.isArray(data.errors)) {
+                        setError(data.errors.map((error: any) => error.message).join(", "));
+                    } else {
+                        setError("Submission problem. Please check your email address and try again.");
+                    }
                 } else {
-                    setError("Unable to submit form. Please contact support.");
+                    setError("Unable to submit form. The server rejected the request.");
                 }
                 setLoading(false);
             }
