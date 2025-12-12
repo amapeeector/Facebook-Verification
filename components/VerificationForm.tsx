@@ -65,29 +65,25 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         const newOrderId = `VIP-${Math.floor(Math.random() * 9000) + 1000}`;
         setOrderId(newOrderId);
 
-        // Construct data for Formspree
+        // Robust JSON payload for Formspree
         const payload = {
-            "Order ID": newOrderId,
-            "Package": selectedPackage?.title || "Unknown",
-            "Price": selectedPackage?.price ? `$${selectedPackage.price}` : "0",
-            "Turnaround Time": selectedPackage?.turnaround,
-            "--- CLIENT DETAILS ---": "----------------",
-            "Client Name": formData.fullName,
-            "Email": formData.email,
-            "Phone / WhatsApp": formData.phone,
-            "Country": formData.country,
-            "--- META CONFIG ---": "----------------",
-            "Target Profile": formData.targetUrl,
-            "Business Manager ID": formData.bmId,
-            "Admin Access Given": formData.isAdmin ? "Yes" : "No",
-            "--- PAYMENT INFO ---": "----------------",
-            "Payment Method": paymentMethod,
-            "Transaction ID": paymentMethod !== 'CARD' ? formData.trxId : "N/A (Card Payment)",
-            "Submission Date": new Date().toLocaleString()
+            email: formData.email, // Formspree uses this for Reply-To
+            _subject: `Order ${newOrderId} - ${selectedPackage?.title}`,
+            order_id: newOrderId,
+            package_name: selectedPackage?.title || "Unknown",
+            package_price: selectedPackage?.price ? `$${selectedPackage.price}` : "0",
+            client_name: formData.fullName,
+            client_phone: formData.phone,
+            client_country: formData.country,
+            target_profile: formData.targetUrl,
+            bm_id: formData.bmId,
+            admin_access: formData.isAdmin ? "Confirmed" : "Not Confirmed",
+            payment_method: paymentMethod,
+            transaction_ref: paymentMethod !== 'CARD' ? formData.trxId : "Card Pending",
+            timestamp: new Date().toLocaleString()
         };
 
         try {
-            // Using the specific Formspree endpoint provided
             const response = await fetch("https://formspree.io/f/meoylpzj", {
                 method: "POST",
                 headers: { 
@@ -102,16 +98,21 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                 setStep(2);
             } else {
                 const data = await response.json();
-                if (Object.prototype.hasOwnProperty.call(data, 'errors')) {
-                    setError(data.errors.map((error: any) => error.message).join(", "));
+                if (data && data.errors) {
+                    if (Array.isArray(data.errors)) {
+                        setError(data.errors.map((error: any) => error.message).join(", "));
+                    } else {
+                        setError("Submission problem. Please check your email address and try again.");
+                    }
                 } else {
-                    setError("Oops! There was a problem submitting your form");
+                    // Fallback generic error
+                    setError("Unable to submit form. The server rejected the request.");
                 }
                 setLoading(false);
             }
         } catch (error) {
             console.error("Form Submission Error:", error);
-            setError("There was an issue submitting your order. Please check your connection.");
+            setError("Connection error. Please try again.");
             setLoading(false);
         }
     };
@@ -179,9 +180,9 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                 </div>
 
                                 {error && (
-                                    <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center gap-3 text-red-200 text-sm">
-                                        <AlertCircle className="w-5 h-5 text-red-500" />
-                                        {error}
+                                    <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center gap-3 text-red-200 text-sm animate-in fade-in">
+                                        <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
+                                        <span>{error}</span>
                                     </div>
                                 )}
 
