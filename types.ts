@@ -49,7 +49,8 @@ export enum ViewMode {
     IMAGE_EDITOR = 'IMAGE_EDITOR',
     FASHION_STUDIO = 'FASHION_STUDIO',
     ANALYTICS = 'ANALYTICS',
-    TRENDS = 'TRENDS'
+    TRENDS = 'TRENDS',
+    ADMIN = 'ADMIN'
 }
 
 export interface RepoFileTree {
@@ -127,6 +128,18 @@ export interface FashionJob {
     generatedVideo?: string; // URL to video
     status: 'queue' | 'processing' | 'completed' | 'failed';
     type: 'image' | 'video';
+}
+
+export interface Article {
+    id: number;
+    title: string;
+    excerpt: string;
+    content: string[]; // Array of paragraphs
+    category: string;
+    date: string;
+    author: string;
+    tags: string[];
+    image: string;
 }
 
 declare global {

@@ -16,8 +16,10 @@ import FashionStudio from './components/FashionStudio';
 import ToolsDashboard from './components/ToolsDashboard';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import TrendsPage from './components/TrendsPage';
+import AdminDashboard from './components/AdminDashboard';
 import { BadgeCheck, Menu, X, Palette, Sparkles, Home as HomeIcon, TrendingUp } from 'lucide-react';
-import { PackageItem, ViewMode, ArticleHistoryItem, RepoHistoryItem, DevStudioState } from './types';
+import { PackageItem, ViewMode, ArticleHistoryItem, RepoHistoryItem, DevStudioState, Article } from './types';
+import { INITIAL_ARTICLES } from './initialData';
 
 // Theme Definitions
 const THEMES = [
@@ -40,6 +42,9 @@ const App: React.FC = () => {
   const [articleHistory, setArticleHistory] = useState<ArticleHistoryItem[]>([]);
   const [devStudioState, setDevStudioState] = useState<DevStudioState | null>(null);
   const [editorInitialState, setEditorInitialState] = useState<{data: string, mimeType: string} | null>(null);
+  
+  // Data State
+  const [articles, setArticles] = useState<Article[]>(INITIAL_ARTICLES);
 
   // Apply Theme Variables
   useEffect(() => {
@@ -60,6 +65,10 @@ const App: React.FC = () => {
       setViewMode(mode);
       window.scrollTo(0, 0);
       setMobileMenuOpen(false);
+  };
+
+  const handleAddArticle = (newArticle: Article) => {
+      setArticles([newArticle, ...articles]);
   };
 
   if (showIntro) {
@@ -186,7 +195,7 @@ const App: React.FC = () => {
              <Home onNavigate={handleNavigate} />
         )}
         {viewMode === ViewMode.TRENDS && (
-             <TrendsPage />
+             <TrendsPage articles={articles} />
         )}
         {viewMode === ViewMode.TOOLS_DASHBOARD && (
              <ToolsDashboard onNavigate={handleNavigate} />
@@ -221,6 +230,12 @@ const App: React.FC = () => {
         )}
         {viewMode === ViewMode.ANALYTICS && (
              <AnalyticsDashboard />
+        )}
+        {viewMode === ViewMode.ADMIN && (
+             <AdminDashboard 
+                onAddArticle={handleAddArticle} 
+                onExit={() => handleNavigate(ViewMode.HOME)} 
+             />
         )}
       </main>
 

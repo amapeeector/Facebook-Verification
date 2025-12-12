@@ -5,10 +5,11 @@
 */
 
 import React from 'react';
-import { Twitter, Instagram, Facebook, Linkedin, Mail, MapPin, Phone, BarChart2 } from 'lucide-react';
+import { Twitter, Instagram, Facebook, Linkedin, Mail, MapPin, Phone, BarChart2, Lock } from 'lucide-react';
+import { ViewMode } from '../types';
 
 interface FooterProps {
-    onNavigate?: (mode: any) => void;
+    onNavigate?: (mode: ViewMode) => void;
 }
 
 const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
@@ -62,9 +63,14 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                         <a href="#" className="hover:text-slate-300">Privacy Policy</a>
                         <a href="#" className="hover:text-slate-300">Terms of Service</a>
                         {onNavigate && (
-                             <button onClick={() => onNavigate('ANALYTICS')} className="hover:text-accent-400 flex items-center gap-1">
-                                <BarChart2 className="w-3 h-3" /> Site Analytics
-                             </button>
+                            <>
+                                <button onClick={() => onNavigate(ViewMode.ANALYTICS)} className="hover:text-accent-400 flex items-center gap-1">
+                                    <BarChart2 className="w-3 h-3" /> Analytics
+                                </button>
+                                <button onClick={() => onNavigate(ViewMode.ADMIN)} className="hover:text-accent-400 flex items-center gap-1">
+                                    <Lock className="w-3 h-3" /> Admin
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>
