@@ -5,7 +5,7 @@
 */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, User, ArrowRight, TrendingUp, Search, Tag, ArrowLeft, Play, Pause, Volume2, Globe, ChevronDown, StopCircle } from 'lucide-react';
+import { Calendar, User, ArrowRight, TrendingUp, Search, Tag, ArrowLeft, Play, Pause, Volume2, Globe, ChevronDown, StopCircle, Mic } from 'lucide-react';
 import { Article } from '../types';
 
 interface TrendsPageProps {
@@ -130,6 +130,47 @@ const TrendsPage: React.FC<TrendsPageProps> = ({ articles }) => {
       window.speechSynthesis.getVoices();
   }, []);
 
+  // Helper to render markdown-like content
+  const renderParagraph = (text: string, idx: number) => {
+      // 1. Headers
+      if (text.startsWith('## ')) {
+          return <h2 key={idx} className="text-2xl font-bold text-white mt-10 mb-4">{text.replace('## ', '')}</h2>;
+      }
+      // 2. Images inside text: ![Alt](url)
+      const imgMatch = text.match(/!\[(.*?)\]\((.*?)\)/);
+      if (imgMatch) {
+          const alt = imgMatch[1];
+          const src = imgMatch[2];
+          return (
+              <div key={idx} className="my-8 rounded-2xl overflow-hidden border border-white/10 shadow-xl">
+                  <img src={src} alt={alt} className="w-full h-auto" />
+                  {alt && <p className="text-center text-xs text-slate-500 mt-2 p-2">{alt}</p>}
+              </div>
+          );
+      }
+      // 3. Lists
+      if (text.startsWith('- ') || text.startsWith('1. ') || text.startsWith('2. ')) {
+          return (
+            <p key={idx} className="text-slate-300 mb-4 pl-4 border-l-2 border-accent-500/30 leading-relaxed font-medium">
+                {text.replace(/^[-*12.]\s/, '')}
+            </p>
+          );
+      }
+
+      // 4. Bold Text parsing (simple regex replacement for display)
+      const parts = text.split(/(\*\*.*?\*\*)/g);
+      return (
+        <p key={idx} className="text-slate-300 mb-6 leading-relaxed text-lg">
+            {parts.map((part, i) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                    return <strong key={i} className="text-white font-bold">{part.slice(2, -2)}</strong>;
+                }
+                return part;
+            })}
+        </p>
+      );
+  };
+
 
   // --- Render Views ---
 
@@ -218,10 +259,32 @@ const TrendsPage: React.FC<TrendsPageProps> = ({ articles }) => {
                       </div>
                   </div>
 
-                  {/* Featured Image */}
-                  <div className="w-full aspect-video rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl relative">
-                      <img src={selectedArticle.image} alt={selectedArticle.title} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
+                  {/* Featured Image or Audio Player */}
+                  <div className="w-full rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl relative bg-slate-900">
+                      {selectedArticle.type === 'voice' ? (
+                          <div className="aspect-[2/1] flex flex-col items-center justify-center bg-gradient-to-br from-emerald-900 to-slate-900 relative">
+                              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                              <div className="w-24 h-24 rounded-full bg-emerald-500 flex items-center justify-center shadow-[0_0_50px_rgba(16,185,129,0.4)] animate-pulse mb-6 relative z-10">
+                                  <Mic className="w-10 h-10 text-slate-900" />
+                              </div>
+                              <h3 className="text-2xl font-bold text-white relative z-10">Cricket Voice Update</h3>
+                              <p className="text-emerald-300/80 text-sm mt-2 relative z-10">Audio Analysis by {selectedArticle.author}</p>
+                              
+                              {selectedArticle.audioUrl && (
+                                  <div className="w-full max-w-md px-8 mt-8 relative z-10">
+                                      <audio controls className="w-full">
+                                          <source src={selectedArticle.audioUrl} type="audio/mpeg" />
+                                          Your browser does not support the audio element.
+                                      </audio>
+                                  </div>
+                              )}
+                          </div>
+                      ) : (
+                          <div className="aspect-video relative">
+                              <img src={selectedArticle.image} alt={selectedArticle.title} className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
+                          </div>
+                      )}
                   </div>
 
                   {/* Body Text */}
@@ -237,19 +300,7 @@ const TrendsPage: React.FC<TrendsPageProps> = ({ articles }) => {
                           </div>
                       )}
 
-                      {selectedArticle.content.map((paragraph, idx) => {
-                          if (paragraph.startsWith('## ')) {
-                              return <h2 key={idx} className="text-2xl font-bold text-white mt-10 mb-4">{paragraph.replace('## ', '')}</h2>
-                          }
-                          if (paragraph.startsWith('1. ') || paragraph.startsWith('2. ') || paragraph.startsWith('3. ')) {
-                              return <p key={idx} className="text-slate-300 mb-6 pl-4 border-l-2 border-accent-500/30 leading-relaxed font-medium">{paragraph}</p>
-                          }
-                          return (
-                            <p key={idx} className="text-slate-300 mb-6 leading-relaxed text-lg">
-                                {paragraph}
-                            </p>
-                          );
-                      })}
+                      {selectedArticle.content.map((paragraph, idx) => renderParagraph(paragraph, idx))}
                   </div>
                   
                   {/* Tags */}
@@ -305,13 +356,19 @@ const TrendsPage: React.FC<TrendsPageProps> = ({ articles }) => {
             <div className="mb-16">
                 <div onClick={() => setSelectedArticle(articles[0])} className="bg-slate-900/40 border border-white/10 rounded-[32px] overflow-hidden hover:border-accent-500/30 transition-all group cursor-pointer relative shadow-2xl">
                     <div className="grid md:grid-cols-2 gap-8">
-                        <div className="h-64 md:h-auto overflow-hidden relative">
+                        <div className="h-64 md:h-auto overflow-hidden relative bg-slate-950">
                              <div className="absolute inset-0 bg-accent-600/20 mix-blend-overlay z-10"></div>
-                             <img 
-                                src={articles[0].image} 
-                                alt={articles[0].title} 
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                             />
+                             {articles[0].type === 'voice' ? (
+                                <div className="w-full h-full flex items-center justify-center bg-emerald-900/50">
+                                    <Mic className="w-20 h-20 text-emerald-400 opacity-80" />
+                                </div>
+                             ) : (
+                                <img 
+                                    src={articles[0].image} 
+                                    alt={articles[0].title} 
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                />
+                             )}
                         </div>
                         <div className="p-8 md:p-12 flex flex-col justify-center">
                             <div className="flex items-center gap-2 mb-4">
@@ -338,12 +395,18 @@ const TrendsPage: React.FC<TrendsPageProps> = ({ articles }) => {
             {articles.slice(!searchQuery && articles.length > 0 ? 1 : 0).filter(a => a.title.toLowerCase().includes(searchQuery.toLowerCase())).map((article) => (
                 <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-slate-900/20 border border-white/5 rounded-3xl p-6 hover:bg-slate-900/60 hover:border-accent-500/20 transition-all group cursor-pointer flex flex-col h-full hover:shadow-xl hover:-translate-y-1">
                     <div className="mb-4 flex items-center justify-between">
-                         <span className="text-xs font-bold text-accent-400 bg-accent-500/10 px-2 py-1 rounded-lg uppercase tracking-wide">
+                         <span className={`text-xs font-bold px-2 py-1 rounded-lg uppercase tracking-wide ${article.category === 'Cricket' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-accent-500/10 text-accent-400'}`}>
                             {article.category}
                          </span>
-                         <span className="text-[10px] text-slate-500 flex items-center gap-1">
-                            <Volume2 className="w-3 h-3" /> Audio Available
-                         </span>
+                         {article.type === 'voice' ? (
+                             <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-bold">
+                                <Mic className="w-3 h-3" /> Voice Post
+                             </span>
+                         ) : (
+                             <span className="text-[10px] text-slate-500 flex items-center gap-1">
+                                <Volume2 className="w-3 h-3" /> Audio Available
+                             </span>
+                         )}
                     </div>
                     
                     <h3 className="text-xl font-bold text-white mb-3 group-hover:text-accent-300 transition-colors leading-tight">

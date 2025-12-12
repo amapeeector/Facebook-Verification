@@ -140,6 +140,9 @@ export interface Article {
     author: string;
     tags: string[];
     image: string;
+    type?: 'article' | 'voice';
+    audioUrl?: string;
+    views?: number;
 }
 
 declare global {
