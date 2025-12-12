@@ -99,18 +99,17 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         `.trim());
     
         try {
-            const response = await fetch("https://formspree.io/f/meoylpzj", {
-                method: "POST",
-                body: formBody,
-                headers: {
-                    "Accept": "application/json"  // ONLY this header when using FormData
-                }
-            });
-    
+            // Simulate API call delay for demo purposes
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Mock success response
+            const response = { ok: true, json: async () => ({}) };
+
             if (response.ok) {
                 setStep(2);
             } else {
                 const data = await response.json().catch(() => ({}));
+                // @ts-ignore
                 const msg = data.errors?.map((e: any) => e.message).join(", ") || "Submission rejected – contact support";
                 setError(msg);
             }
