@@ -5,7 +5,7 @@
 */
 
 import React, { useState, useEffect } from 'react';
-import { BadgeCheck, Lock, CreditCard, ShoppingCart, Trash2, Settings, CheckCircle2, Shield, Gem, AlertCircle, Smartphone, Building2, Wallet } from 'lucide-react';
+import { BadgeCheck, Lock, CreditCard, ShoppingCart, Trash2, Settings, CheckCircle2, Shield, Gem, AlertCircle, Smartphone, Building2, Wallet, Bitcoin } from 'lucide-react';
 import { VerificationFormData, PackageItem } from '../types';
 
 interface VerificationFormProps {
@@ -16,15 +16,15 @@ interface VerificationFormProps {
 // Fixed: VipInput defined outside component to prevent focus loss
 const VipInput = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
     <div className="relative group">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-accent-500 to-accent-700 rounded-xl opacity-0 group-focus-within:opacity-50 transition-opacity duration-500 blur-sm"></div>
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-accent-500 to-accent-600 rounded-xl opacity-20 group-hover:opacity-50 group-focus-within:opacity-100 transition-opacity duration-300 blur-sm"></div>
         <input 
             {...props} 
-            className="relative w-full bg-slate-950/80 border border-white/10 text-white placeholder:text-slate-500 rounded-xl px-5 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500 transition-all shadow-inner"
+            className="relative w-full bg-slate-950 border border-accent-500/30 text-white placeholder:text-slate-500 focus:placeholder:text-accent-200/40 rounded-xl px-5 py-4 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-accent-400 focus:border-accent-400 transition-all shadow-xl backdrop-blur-sm tracking-wide"
         />
     </div>
 );
 
-type PaymentMethod = 'CARD' | 'EASYPAISA' | 'JAZZCASH' | 'BANK';
+type PaymentMethod = 'CARD' | 'EASYPAISA' | 'JAZZCASH' | 'BANK' | 'CRYPTO';
 
 const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, onClearPackage }) => {
     const [step, setStep] = useState(1);
@@ -66,7 +66,6 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         setOrderId(newOrderId);
 
         // Construct data for Formspree
-        // We use descriptive keys so the email table looks good
         const payload = {
             "Order ID": newOrderId,
             "Package": selectedPackage?.title || "Unknown",
@@ -88,6 +87,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         };
 
         try {
+            // Using the specific Formspree endpoint provided
             const response = await fetch("https://formspree.io/f/meoylpzj", {
                 method: "POST",
                 headers: { 
@@ -130,6 +130,23 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
             </div>
         );
     }
+
+    const renderPaymentButton = (method: PaymentMethod, icon: React.ReactNode, label: string) => (
+        <button 
+            type="button" 
+            onClick={() => setPaymentMethod(method)} 
+            className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 group ${
+                paymentMethod === method 
+                ? 'bg-accent-600 border-accent-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.3)] scale-[1.02]' 
+                : 'bg-slate-950/50 border-accent-500/10 text-slate-400 hover:bg-accent-900/20 hover:border-accent-500/30 hover:text-accent-200'
+            }`}
+        >
+            <div className={`${paymentMethod === method ? 'text-white' : 'text-slate-500 group-hover:text-accent-400'}`}>
+                {icon}
+            </div>
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider">{label}</span>
+        </button>
+    );
 
     return (
         <div className="max-w-7xl mx-auto px-4 relative z-10 py-12">
@@ -187,9 +204,9 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                         02 // Meta Configuration
                                     </h4>
                                     
-                                    <div className="bg-black/20 rounded-2xl p-6 border border-white/5 space-y-6 relative overflow-hidden">
+                                    <div className="bg-slate-950/40 rounded-2xl p-6 border border-white/5 space-y-6 relative overflow-hidden">
                                         <div className="flex items-start gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center shrink-0 border border-white/10 shadow-sm">
+                                            <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center shrink-0 border border-accent-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
                                                 <Settings className="w-5 h-5 text-accent-500" />
                                             </div>
                                             <div>
@@ -208,16 +225,16 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-3 pt-2 pl-1">
+                                        <div className="flex items-center gap-3 pt-2 pl-1 group cursor-pointer">
                                             <input 
                                                 type="checkbox" 
                                                 required 
                                                 id="isAdmin" 
                                                 name="isAdmin"
-                                                className="w-4 h-4 rounded bg-slate-900 border-slate-600 text-accent-500 focus:ring-accent-500"
+                                                className="w-5 h-5 rounded bg-slate-950 border-accent-500/30 text-accent-600 focus:ring-accent-500 focus:ring-offset-slate-950 cursor-pointer"
                                                 onChange={(e) => setFormData({...formData, isAdmin: e.target.checked})}
                                             />
-                                            <label htmlFor="isAdmin" className="text-xs text-slate-300 cursor-pointer select-none">
+                                            <label htmlFor="isAdmin" className="text-xs text-slate-300 cursor-pointer select-none group-hover:text-accent-400 transition-colors">
                                                 I confirm I have added the provided Admin email to my BM.
                                             </label>
                                         </div>
@@ -230,26 +247,76 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                         03 // Payment Method
                                     </h4>
                                     
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                                        <button type="button" onClick={() => setPaymentMethod('CARD')} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${paymentMethod === 'CARD' ? 'bg-accent-600 border-accent-500 text-white shadow-lg' : 'bg-slate-900 border-white/5 text-slate-400 hover:bg-slate-800'}`}>
-                                            <CreditCard className="w-5 h-5" /> <span className="text-xs font-bold">Card</span>
-                                        </button>
-                                        <button type="button" onClick={() => setPaymentMethod('EASYPAISA')} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${paymentMethod === 'EASYPAISA' ? 'bg-green-600 border-green-500 text-white shadow-lg' : 'bg-slate-900 border-white/5 text-slate-400 hover:bg-slate-800'}`}>
-                                            <Smartphone className="w-5 h-5" /> <span className="text-xs font-bold">EasyPaisa</span>
-                                        </button>
-                                        <button type="button" onClick={() => setPaymentMethod('JAZZCASH')} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${paymentMethod === 'JAZZCASH' ? 'bg-red-600 border-red-500 text-white shadow-lg' : 'bg-slate-900 border-white/5 text-slate-400 hover:bg-slate-800'}`}>
-                                            <Wallet className="w-5 h-5" /> <span className="text-xs font-bold">JazzCash</span>
-                                        </button>
-                                        <button type="button" onClick={() => setPaymentMethod('BANK')} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${paymentMethod === 'BANK' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-slate-900 border-white/5 text-slate-400 hover:bg-slate-800'}`}>
-                                            <Building2 className="w-5 h-5" /> <span className="text-xs font-bold">HBL / Bank</span>
-                                        </button>
+                                    {/* Payment Method Selector */}
+                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                                        {renderPaymentButton('CARD', <CreditCard className="w-6 h-6" />, 'Card')}
+                                        {renderPaymentButton('EASYPAISA', <Smartphone className="w-6 h-6" />, 'EasyPaisa')}
+                                        {renderPaymentButton('JAZZCASH', <Wallet className="w-6 h-6" />, 'JazzCash')}
+                                        {renderPaymentButton('BANK', <Building2 className="w-6 h-6" />, 'Bank')}
+                                        {renderPaymentButton('CRYPTO', <Bitcoin className="w-6 h-6" />, 'Crypto')}
                                     </div>
 
-                                    {paymentMethod === 'CARD' ? (
+                                    {/* Detailed Payment Info Views */}
+                                    {paymentMethod === 'CARD' && (
                                         <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/5 text-center">
                                              <p className="text-sm text-slate-300">Secure Stripe Checkout will load after details submission.</p>
                                         </div>
-                                    ) : (
+                                    )}
+
+                                    {paymentMethod === 'CRYPTO' && (
+                                        <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/5 space-y-4">
+                                            <div className="flex items-start gap-4">
+                                                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-amber-500/30">
+                                                    <Bitcoin className="w-5 h-5 text-amber-500" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h5 className="text-white font-bold text-sm mb-2">Binance & Crypto Wallets</h5>
+                                                    <p className="text-xs text-slate-400 mb-3">Send the exact USD amount to any of the wallets below.</p>
+                                                    
+                                                    <div className="space-y-2">
+                                                        <div className="bg-black/40 p-2.5 rounded-lg border border-white/5 flex flex-col gap-1">
+                                                            <span className="text-[10px] text-slate-500 font-bold uppercase">Binance Pay ID</span>
+                                                            <code className="text-white font-mono text-xs select-all">892341052</code>
+                                                        </div>
+                                                        <div className="bg-black/40 p-2.5 rounded-lg border border-white/5 flex flex-col gap-1">
+                                                            <span className="text-[10px] text-slate-500 font-bold uppercase">USDT (TRC20)</span>
+                                                            <code className="text-white font-mono text-xs select-all break-all">TJ8s2...YourWalletAddressHere</code>
+                                                        </div>
+                                                        <div className="bg-black/40 p-2.5 rounded-lg border border-white/5 flex flex-col gap-1">
+                                                            <span className="text-[10px] text-slate-500 font-bold uppercase">Bitcoin (BTC)</span>
+                                                            <code className="text-white font-mono text-xs select-all break-all">bc1qxy2...YourWalletAddressHere</code>
+                                                        </div>
+                                                        <div className="bg-black/40 p-2.5 rounded-lg border border-white/5 flex flex-col gap-1">
+                                                            <span className="text-[10px] text-slate-500 font-bold uppercase">Ethereum (ETH)</span>
+                                                            <code className="text-white font-mono text-xs select-all break-all">0x71C...YourWalletAddressHere</code>
+                                                        </div>
+                                                        <div className="bg-black/40 p-2.5 rounded-lg border border-white/5 flex flex-col gap-1">
+                                                            <span className="text-[10px] text-slate-500 font-bold uppercase">Solana (SOL)</span>
+                                                            <code className="text-white font-mono text-xs select-all break-all">HN7d...YourWalletAddressHere</code>
+                                                        </div>
+                                                    </div>
+
+                                                    <p className="text-[10px] text-slate-500 mt-4">
+                                                        Total Amount: <span className="text-amber-400 font-bold">${selectedPackage.price.toFixed(2)} USD</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="pt-2">
+                                                <VipInput 
+                                                    required 
+                                                    name="trxId" 
+                                                    type="text" 
+                                                    placeholder="Enter Transaction Hash (TxID)" 
+                                                    value={formData.trxId}
+                                                    onChange={handleChange}
+                                                />
+                                                <p className="text-[10px] text-slate-500 mt-2 pl-2">Proof of payment required to process order.</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {['EASYPAISA', 'JAZZCASH', 'BANK'].includes(paymentMethod) && (
                                         <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/5 space-y-4">
                                             <div className="flex items-start gap-4">
                                                 <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
@@ -308,7 +375,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
                                 <button 
                                     type="submit" 
                                     disabled={loading}
-                                    className="w-full py-5 bg-gradient-to-r from-accent-600 to-accent-700 hover:from-accent-500 hover:to-accent-600 text-white rounded-2xl font-black text-lg shadow-neon transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-3 relative overflow-hidden group"
+                                    className="w-full py-5 bg-gradient-to-r from-accent-600 to-accent-700 hover:from-accent-500 hover:to-accent-600 border border-accent-400/20 text-white rounded-2xl font-black text-lg shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:shadow-[0_0_50px_rgba(59,130,246,0.6)] transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-3 relative overflow-hidden group"
                                 >
                                     <span className="relative z-10 flex items-center gap-2">
                                         {loading ? "Submitting Order..." : <>Complete Verification Order <CreditCard className="w-5 h-5" /></>}
@@ -383,4 +450,31 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
 
                             <div className="bg-black/20 rounded-xl p-4 space-y-3 border border-white/5">
                                 <div className="flex justify-between text-sm text-slate-400">
-                               
+                                    <span>Subtotal</span>
+                                    <span className="font-mono text-white">${selectedPackage.price.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-sm text-slate-400">
+                                    <span>Service Fee</span>
+                                    <span className="text-accent-400 font-mono font-bold">INCLUDED</span>
+                                </div>
+                                <div className="flex justify-between text-lg font-black text-white pt-3 border-t border-white/10">
+                                    <span>Total Due</span>
+                                    <span className="text-accent-400">${selectedPackage.price.toFixed(2)}</span>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-accent-900/20 border border-accent-500/20 p-4 rounded-xl flex items-start gap-3">
+                                <Shield className="w-5 h-5 text-accent-500 shrink-0 mt-0.5" />
+                                <p className="text-[11px] text-accent-200 leading-relaxed">
+                                    <strong>Safe & Secure:</strong> We do not ask for passwords. Admin access allows us to legally whitelist your asset.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default VerificationForm;

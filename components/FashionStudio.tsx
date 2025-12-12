@@ -42,7 +42,7 @@ const FashionStudio: React.FC = () => {
         if ('dataTransfer' in e) {
             files = (e as React.DragEvent).dataTransfer.files;
         } else {
-            files = (e as React.ChangeEvent<HTMLInputElement>).files;
+            files = (e as React.ChangeEvent<HTMLInputElement>).target.files;
         }
 
         if (files) {
