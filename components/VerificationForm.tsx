@@ -65,32 +65,31 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
         const newOrderId = `VIP-${Math.floor(Math.random() * 9000) + 1000}`;
         setOrderId(newOrderId);
 
-        // Robust JSON payload for Formspree
-        const payload = {
-            email: formData.email, // Formspree uses this for Reply-To
-            _subject: `Order ${newOrderId} - ${selectedPackage?.title}`,
-            order_id: newOrderId,
-            package_name: selectedPackage?.title || "Unknown",
-            package_price: selectedPackage?.price ? `$${selectedPackage.price}` : "0",
-            client_name: formData.fullName,
-            client_phone: formData.phone,
-            client_country: formData.country,
-            target_profile: formData.targetUrl,
-            bm_id: formData.bmId,
-            admin_access: formData.isAdmin ? "Confirmed" : "Not Confirmed",
-            payment_method: paymentMethod,
-            transaction_ref: paymentMethod !== 'CARD' ? formData.trxId : "Card Pending",
-            timestamp: new Date().toLocaleString()
-        };
+        // Using FormData is more robust for Formspree than JSON
+        // It avoids issues with Content-Type headers and CORS preflights in some environments
+        const formBody = new FormData();
+        formBody.append("email", formData.email); 
+        formBody.append("_subject", `New Order #${newOrderId} - ${selectedPackage?.title}`);
+        formBody.append("order_id", newOrderId);
+        formBody.append("package_name", selectedPackage?.title || "Unknown");
+        formBody.append("package_price", selectedPackage?.price ? `$${selectedPackage.price}` : "0");
+        formBody.append("client_name", formData.fullName);
+        formBody.append("client_phone", formData.phone);
+        formBody.append("client_country", formData.country);
+        formBody.append("target_profile", formData.targetUrl);
+        formBody.append("bm_id", formData.bmId);
+        formBody.append("admin_access", formData.isAdmin ? "Confirmed" : "Not Confirmed");
+        formBody.append("payment_method", paymentMethod);
+        formBody.append("transaction_ref", paymentMethod !== 'CARD' ? formData.trxId : "Card Pending");
+        formBody.append("timestamp", new Date().toLocaleString());
 
         try {
             const response = await fetch("https://formspree.io/f/meoylpzj", {
                 method: "POST",
+                body: formBody,
                 headers: { 
-                    "Content-Type": "application/json",
                     "Accept": "application/json"
-                },
-                body: JSON.stringify(payload)
+                }
             });
 
             if (response.ok) {
@@ -99,14 +98,11 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ selectedPackage, on
             } else {
                 const data = await response.json();
                 if (data && data.errors) {
-                    if (Array.isArray(data.errors)) {
-                        setError(data.errors.map((error: any) => error.message).join(", "));
-                    } else {
-                        setError("Submission problem. Please check your email address and try again.");
-                    }
+                    // Formspree validation errors
+                    const messages = data.errors.map((err: any) => err.message).join(", ");
+                    setError(`Submission failed: ${messages}`);
                 } else {
-                    // Fallback generic error
-                    setError("Unable to submit form. The server rejected the request.");
+                    setError("Unable to submit form. Please contact support.");
                 }
                 setLoading(false);
             }
